@@ -89,13 +89,13 @@ footer{padding:28px 0;color:var(--muted);font-size:14px;border-top:1px solid var
       <div class="icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></svg></div>
       <h3>Software development</h3>
       <p>Backend services and REST APIs: authentication, billing integrations, message processing, data pipelines.</p>
-      <div class="chips"><span class="chip">python</span><span class="chip">fastapi</span><span class="chip">postgresql</span><span class="chip">redis</span></div>
+      <div class="chips"><span class="chip">python</span><span class="chip">fastapi</span><span class="chip">postgresql</span><span class="chip">mongodb</span><span class="chip">redis</span><span class="chip">pub/sub</span></div>
     </div>
     <div class="card">
       <div class="icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg></div>
       <h3>Cloud infrastructure</h3>
       <p>Containerised deployments, Kubernetes with Helm and GitOps, CI/CD pipelines, monitoring and alerting.</p>
-      <div class="chips"><span class="chip">kubernetes</span><span class="chip">gitops</span><span class="chip">google cloud</span><span class="chip">grafana</span></div>
+      <div class="chips"><span class="chip">gcp</span><span class="chip">aws</span><span class="chip">kubernetes</span><span class="chip">gitops</span><span class="chip">grafana</span></div>
     </div>
     <div class="card">
       <div class="icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
@@ -111,10 +111,12 @@ footer{padding:28px 0;color:var(--muted);font-size:14px;border-top:1px solid var
     <h2>Clients</h2>
     <p class="sub">Our main client is <a href="https://www.360dialog.com/" rel="noopener">360dialog GmbH</a> (Germany), a WhatsApp Business API provider. We have worked with them since 2021.</p>
     <ul>
-      <li>Backend development of the messaging platform: authentication, API gateway, partner and client services</li>
-      <li>Integrations with billing and third-party APIs</li>
-      <li>Releases through GitOps to Kubernetes, monitoring and alerting</li>
-      <li>Production incident investigation and code review</li>
+      <li>Rolled out a new identity and access management system for 180,000+ users with zero downtime</li>
+      <li>Designed and launched an auto-scaling proxy that centralises all Meta API traffic for security, rate limiting and monitoring</li>
+      <li>Built an AI agent that creates WhatsApp message templates in a few clicks</li>
+      <li>Built shared internal packages for monitoring, databases, logging and authentication that cut new-service delivery from days to hours</li>
+      <li>Integrations with WhatsApp, Google Analytics, Brevo, Mixpanel, SendGrid and Sentry</li>
+      <li>On-call duty, incident investigation, code review and mentoring</li>
     </ul>
   </div>
   <div class="card">
@@ -127,12 +129,13 @@ footer{padding:28px 0;color:var(--muted);font-size:14px;border-top:1px solid var
 
 <section id="founder" class="alt"><div class="wrap">
   <h2>Founder</h2>
-  <p class="sub"><b>Artem Mashkovskii</b>, managing director and senior software engineer. More than ten years in software and data: Python backends, trading surveillance systems, data platforms. Graduate of Mathematics and Mechanics, Saint Petersburg State University (2015).</p>
+  <p class="sub"><b>Artem Mashkovskii</b>, managing director and staff software engineer. More than ten years in software and data: Python backends, cloud architecture, microservices and market surveillance systems. Master's degree in Applied Mathematics and Informatics, Saint Petersburg State University (2015).</p>
   <ul class="timeline">
     <li><div class="when">2024 — now</div><b>ARM24, Novi Sad</b><span>Founder. Software development services for EU clients.</span></li>
-    <li><div class="when">2021 — now</div><b>360dialog GmbH</b><span>Senior software engineer (contractor). WhatsApp Business API platform.</span></li>
-    <li><div class="when">2017 — 2021</div><b>OneTick · Particle.One · Rialtic</b><span>Lead developer of a trading surveillance product used by a top-tier stock exchange; data pipelines and engines.</span></li>
-    <li style="padding-bottom:0"><div class="when">2015 — 2016</div><b>Comcon Research</b><span>Senior analyst, statistical modelling.</span></li>
+    <li><div class="when">2021 — now</div><b>360dialog GmbH</b><span>Senior backend engineer (contractor). WhatsApp Business API platform: IAM, Meta API proxy, AI agents, integrations.</span></li>
+    <li><div class="when">2020 — 2021</div><b>Freelance: Quantori · Rialtic · Particle.One</b><span>Python engineer. Cloud compute controller on AWS, healthcare policy engines, market data pipelines.</span></li>
+    <li><div class="when">2017 — 2020</div><b>OneTick</b><span>Lead software engineer. Led a team of 4–12 engineers building a market surveillance system for the top US stock exchange and Credit Suisse.</span></li>
+    <li style="padding-bottom:0"><div class="when">2015 — 2016</div><b>Comcon Research</b><span>Senior analyst. Marketing and social data analysis with R, Python and SPSS.</span></li>
   </ul>
 </div></section>
 
@@ -155,7 +158,7 @@ footer{padding:28px 0;color:var(--muted);font-size:14px;border-top:1px solid var
 <section id="contact" class="alt"><div class="wrap contact">
   <div>
     <h2>Contact</h2>
-    <p class="sub" style="margin:0">Mite Ružića 2, Novi Sad, Serbia</p>
+    <p class="sub" style="margin:0">Mite Ružića 2, Novi Sad, Serbia<br>Phone: <a href="tel:+381654809802">+381 65 4809802</a></p>
   </div>
   <div class="btns">
     <a class="btn primary" href="mailto:xanatos.shubunkin@gmail.com">xanatos.shubunkin@gmail.com</a>
