@@ -45,6 +45,7 @@ section.alt{background:var(--bg2)}
 h2{font-size:clamp(28px,4vw,38px);letter-spacing:-.025em;margin:0 0 12px}
 .sub{color:var(--muted);margin:0 0 40px;max-width:640px}
 .grid{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px}
 .card h3{margin:14px 0 8px;font-size:19px}.card p{margin:0 0 16px;color:var(--muted)}
 .icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
@@ -62,29 +63,38 @@ td{padding:14px 20px;border-bottom:1px solid var(--line);vertical-align:top}
 tr:last-child td{border-bottom:0}
 td:first-child{color:var(--muted);width:34%;white-space:nowrap}
 td:last-child{font-weight:500}
+.founder{display:grid;grid-template-columns:220px 1fr;gap:40px;align-items:center}
+.avatar{position:relative;width:220px;height:220px;border-radius:24px;overflow:hidden;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#fff;font:700 64px Inter,sans-serif;letter-spacing:-.04em}
+.avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.fact{border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-size:14px;color:var(--muted);background:var(--card)}
+.fact b{color:var(--fg)}
+.partner .meta{font:500 13px "JetBrains Mono",monospace;color:var(--accent)}
+.partner ul{padding-left:18px;margin:0 0 16px;color:var(--muted)}.partner li{margin:5px 0}
+.partner.main{grid-column:1/-1}
 .contact{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
 footer{padding:28px 0;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
-@media (max-width:760px){nav ul{display:none}.client{grid-template-columns:1fr}td:first-child{white-space:normal}.hero{padding:70px 0 60px}}
+@media (max-width:760px){.founder{grid-template-columns:1fr}.avatar{width:160px;height:160px;font-size:48px}nav ul{display:none}.client{grid-template-columns:1fr}td:first-child{white-space:normal}.hero{padding:70px 0 60px}}
 </style>
 </head>
 <body>
 <header><div class="wrap"><nav>
   <a class="logo" href="#">ARM<span>24</span></a>
-  <ul><li><a href="#services">Services</a></li><li><a href="#client">Clients</a></li><li><a href="#founder">Founder</a></li><li><a href="#company">Company</a></li><li><a href="#contact">Contact</a></li></ul>
+  <ul><li><a href="#services">Services</a></li><li><a href="#ai">AI</a></li><li><a href="#partners">Partners</a></li><li><a href="#founder">Founder</a></li><li><a href="#company">Company</a></li><li><a href="#contact">Contact</a></li></ul>
 </nav></div></header>
 
 <main>
 <div class="hero"><div class="wrap">
   <div class="tag">Novi Sad, Serbia · since 2024</div>
   <h1>Backend engineering for <em>messaging and data platforms</em></h1>
-  <p class="lead">ARM24 is a software development company. We design, build and run backend services, APIs and cloud infrastructure for clients in the EU, under long-term remote service contracts.</p>
+  <p class="lead">ARM24 is a software development company. We design, build and run backend services, APIs and cloud infrastructure for clients in the EU, under long-term remote service contracts. We put AI to work in our clients’ products and in our own engineering process.</p>
   <div class="btns"><a class="btn primary" href="#contact">Get in touch</a><a class="btn" href="#services">What we do</a></div>
 </div></div>
 
 <section id="services" class="alt"><div class="wrap">
   <h2>Services</h2>
   <p class="sub">Software development and consulting, billed monthly in EUR.</p>
-  <div class="grid">
+  <div class="grid g4">
     <div class="card">
       <div class="icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></svg></div>
       <h3>Software development</h3>
@@ -103,43 +113,86 @@ footer{padding:28px 0;color:var(--muted);font-size:14px;border-top:1px solid var
       <p>Architecture and code review, production incident investigation and root-cause analysis, planning of complex projects.</p>
       <div class="chips"><span class="chip">architecture</span><span class="chip">code review</span><span class="chip">incidents</span></div>
     </div>
+    <div class="card">
+      <div class="icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <h3>AI integration</h3>
+      <p>LLM agents inside products, MCP servers that connect AI assistants to business systems, and AI-assisted development and code review.</p>
+      <div class="chips"><span class="chip">gemini</span><span class="chip">claude</span><span class="chip">mcp</span><span class="chip">agents</span></div>
+    </div>
   </div>
 </div></section>
 
-<section id="client"><div class="wrap client">
+<section id="ai"><div class="wrap">
+  <h2>AI in practice</h2>
+  <p class="sub">Not a buzzword for us: AI runs in production systems we built, and in the way we build them.</p>
+  <div class="grid">
+    <div class="card"><h3>AI agents in products</h3><p>A WhatsApp message-template agent on Gemini: a user describes what they need and gets a template that passes Meta review in a few clicks. Includes Meta rejection rules, per-conversation cost caps and model benchmarking.</p></div>
+    <div class="card"><h3>MCP integrations</h3><p>Model Context Protocol server that lets AI assistants work with a messaging platform’s data and APIs securely, with proper authentication scopes.</p></div>
+    <div class="card"><h3>AI-assisted delivery</h3><p>An agent workflow that takes a ticket from plan to tested pull request with two or three human messages, plus an automated reviewer that checks pull requests against the ticket and a checklist. A human engineer reviews every change.</p></div>
+  </div>
+</div></section>
+
+<section id="partners" class="alt"><div class="wrap">
+  <h2>Partners</h2>
+  <p class="sub">Companies we and our founder have worked with, and what was delivered.</p>
+  <div class="grid">
+    <div class="card partner main">
+      <div class="meta">Germany · 2021 — now · main client of ARM24</div>
+      <h3><a href="https://www.360dialog.com/" rel="noopener">360dialog GmbH</a> — WhatsApp Business API platform</h3>
+      <ul>
+        <li>Rolled out a new identity and access management system for 180,000+ users with zero downtime</li>
+        <li>Designed and launched an auto-scaling proxy that centralises all Meta API traffic for security, rate limiting and monitoring</li>
+        <li>Built the AI template agent, the MCP server integration and AI-assisted development tooling</li>
+        <li>Built shared internal packages for monitoring, databases, logging and authentication that cut new-service delivery from days to hours</li>
+        <li>Integrations with WhatsApp, Google Analytics, Brevo, Mixpanel, SendGrid and Sentry</li>
+        <li>On-call duty, incident investigation, code review and mentoring</li>
+      </ul>
+      <div class="chips"><span class="chip">python</span><span class="chip">fastapi</span><span class="chip">postgresql</span><span class="chip">redis</span><span class="chip">gcp</span><span class="chip">kubernetes</span><span class="chip">llm</span></div>
+    </div>
+    <div class="card partner">
+      <div class="meta">USA · financial markets</div>
+      <h3><a href="https://www.onetick.com" rel="noopener">OneTick</a></h3>
+      <ul>
+        <li>Led a team of 4–12 engineers building a market surveillance system that processes billions of transactions</li>
+        <li>Delivered it to the top US stock exchange and Credit Suisse</li>
+        <li>Built surveillance alerts for wash trading and spoofing</li>
+      </ul>
+    </div>
+    <div class="card partner">
+      <div class="meta">USA · healthcare and life sciences</div>
+      <h3>Rialtic · Quantori</h3>
+      <ul>
+        <li>Healthcare policy engines in Python; library work cut new policy integration from days to minutes</li>
+        <li>Prototype AWS cluster controller for scalable bioinformatics computations</li>
+        <li>Internal search for a US medical company</li>
+      </ul>
+    </div>
+    <div class="card partner">
+      <div class="meta">Data and research</div>
+      <h3>Particle.One · Urent · Comcon</h3>
+      <ul>
+        <li>Market data pipelines, backend services and a Vue.js app for data exploration</li>
+        <li>Scooter allocation prediction pipeline; refactoring cut run time from 30 minutes to 10 seconds</li>
+        <li>Marketing and social data analysis with R, Python and SPSS</li>
+      </ul>
+    </div>
+  </div>
+</div></section>
+
+<section id="founder"><div class="wrap founder">
+  <div class="avatar">AM<img src="photo.jpg" alt="Artem Mashkovskii" onerror="this.remove()"></div>
   <div>
-    <h2>Clients</h2>
-    <p class="sub">Our main client is <a href="https://www.360dialog.com/" rel="noopener">360dialog GmbH</a> (Germany), a WhatsApp Business API provider. We have worked with them since 2021.</p>
-    <ul>
-      <li>Rolled out a new identity and access management system for 180,000+ users with zero downtime</li>
-      <li>Designed and launched an auto-scaling proxy that centralises all Meta API traffic for security, rate limiting and monitoring</li>
-      <li>Built an AI agent that creates WhatsApp message templates in a few clicks</li>
-      <li>Built shared internal packages for monitoring, databases, logging and authentication that cut new-service delivery from days to hours</li>
-      <li>Integrations with WhatsApp, Google Analytics, Brevo, Mixpanel, SendGrid and Sentry</li>
-      <li>On-call duty, incident investigation, code review and mentoring</li>
-    </ul>
-  </div>
-  <div class="card">
-    <div class="when" style="font:500 13px 'JetBrains Mono',monospace;color:var(--accent)">Service agreement</div>
-    <h3>360dialog GmbH · Germany</h3>
-    <p>Open-ended service agreement since November 2021. Since May 2024 the services are provided through ARM24.</p>
-    <div class="chips"><span class="chip">B2B</span><span class="chip">remote</span><span class="chip">EUR</span></div>
+    <h2>Artem Mashkovskii</h2>
+    <p class="sub" style="margin-bottom:0">Founder and managing director of ARM24. Staff software engineer with more than ten years in software and data: Python backends, cloud architecture, microservices, AI integration and market surveillance systems. Takes work from problem definition to production release.</p>
+    <div class="facts">
+      <div class="fact"><b>MSc</b> Applied Mathematics and Informatics, Saint Petersburg State University</div>
+      <div class="fact"><b>Top 20</b> All-Russian Math Olympiad 2007</div>
+      <div class="fact"><b>Based in</b> Novi Sad, Serbia</div>
+    </div>
   </div>
 </div></section>
 
-<section id="founder" class="alt"><div class="wrap">
-  <h2>Founder</h2>
-  <p class="sub"><b>Artem Mashkovskii</b>, managing director and staff software engineer. More than ten years in software and data: Python backends, cloud architecture, microservices and market surveillance systems. Master's degree in Applied Mathematics and Informatics, Saint Petersburg State University (2015).</p>
-  <ul class="timeline">
-    <li><div class="when">2024 — now</div><b>ARM24, Novi Sad</b><span>Founder. Software development services for EU clients.</span></li>
-    <li><div class="when">2021 — now</div><b>360dialog GmbH</b><span>Senior backend engineer (contractor). WhatsApp Business API platform: IAM, Meta API proxy, AI agents, integrations.</span></li>
-    <li><div class="when">2020 — 2021</div><b>Freelance: Quantori · Rialtic · Particle.One</b><span>Python engineer. Cloud compute controller on AWS, healthcare policy engines, market data pipelines.</span></li>
-    <li><div class="when">2017 — 2020</div><b>OneTick</b><span>Lead software engineer. Led a team of 4–12 engineers building a market surveillance system for the top US stock exchange and Credit Suisse.</span></li>
-    <li style="padding-bottom:0"><div class="when">2015 — 2016</div><b>Comcon Research</b><span>Senior analyst. Marketing and social data analysis with R, Python and SPSS.</span></li>
-  </ul>
-</div></section>
-
-<section id="company"><div class="wrap">
+<section id="company" class="alt"><div class="wrap">
   <h2>Company details</h2>
   <p class="sub">Registered with the Serbian Business Registers Agency (APR).</p>
   <table>
@@ -155,7 +208,7 @@ footer{padding:28px 0;color:var(--muted);font-size:14px;border-top:1px solid var
   </table>
 </div></section>
 
-<section id="contact" class="alt"><div class="wrap contact">
+<section id="contact"><div class="wrap contact">
   <div>
     <h2>Contact</h2>
     <p class="sub" style="margin:0">Mite Ružića 2, Novi Sad, Serbia<br>Phone: <a href="tel:+381654809802">+381 65 4809802</a></p>
@@ -167,6 +220,6 @@ footer{padding:28px 0;color:var(--muted);font-size:14px;border-top:1px solid var
 </div></section>
 </main>
 
-<footer><div class="wrap">© 2026 ARTEM MASHKOVSKII PR ARM24 NOVI SAD · MB 67443187 · PIB 114263963</div></footer>
+<footer><div class="wrap">© 2024–2026 ARTEM MASHKOVSKII PR ARM24 NOVI SAD · MB 67443187 · PIB 114263963</div></footer>
 </body>
 </html>
