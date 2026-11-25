@@ -214,7 +214,7 @@ function init() {
 // Return page of "Nazad na sajt": a known ?nazad= key wins, else the referrer, longest path first. Only keys of BACK are ever used.
 const BACK = {"cyrl": "/sr-cyrl/#services", "jn": "/sr/javni-narucioci/#services", "cyrl-jn": "/sr-cyrl/javni-narucioci/#services"};
 function backKey(nazad, ref) {
-  if (Object.prototype.hasOwnProperty.call(BACK, nazad ?? "")) return nazad;
+  if (Object.prototype.hasOwnProperty.call(BACK, nazad || "")) return nazad;
   for (const [path, key] of [["/sr-cyrl/javni-narucioci/", "cyrl-jn"], ["/sr/javni-narucioci/", "jn"], ["/sr-cyrl/", "cyrl"]])
     if (ref.startsWith(location.origin + path)) return key;
   return "";
