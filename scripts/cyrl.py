@@ -21,10 +21,8 @@ DIGRAPHS = {"Lj": "Љ", "LJ": "Љ", "lj": "љ", "Nj": "Њ", "NJ": "Њ", "nj": "�
 SINGLE = dict(zip("abcčćdđefghijklmnoprsštuvzž", "абцчћдђефгхијклмнопрсштувзж"))
 SINGLE.update({k.upper(): v.upper() for k, v in SINGLE.items()})
 # Brand, product and technical names that stay Latin in Serbian Cyrillic text.
-KEEP = {"ARM24", "API", "AI", "AWS", "CI", "CD", "CPV", "SDK", "MCP", "IP", "Google", "Cloud", "Kubernetes",
-        "GitHub", "Pages", "Business", "GmbH", "Vue", "js", "SPSS", "R", "OneTick", "Comcon", "Research",
-        "backend", "Backend", "cloud", "spoofing", "Gemini", "Claude", "Senior", "Lead", "Software", "Engineer",
-        "Analyst", "DinaCard", "LAT"}
+KEEP = {"ARM24", "API", "AI", "AWS", "CPV", "IP", "Google", "Cloud", "GitHub", "Business", "GmbH", "SPSS", "R",
+        "OneTick", "Comcon", "Research"}
 # Words where lj, nj or dž are two letters, not a digraph.
 SPLIT = {"nadž": 2, "podž": 2, "odž": 1, "predž": 3, "konjunk": 2, "injek": 1}  # substring: offset of the two letters
 WORD = re.compile(r"[A-Za-zČĆŽŠĐčćžšđ]+")
@@ -110,8 +108,8 @@ SWAPS = [  # (Latin page text, Cyrillic page text): page identity, applied befor
     ('<link rel="canonical" href="https://arm24.rs/sr/">', '<link rel="canonical" href="https://arm24.rs/sr-cyrl/">'),
     ('<meta property="og:url" content="https://arm24.rs/sr/">', '<meta property="og:url" content="https://arm24.rs/sr-cyrl/">'),
     ('<a class="logo" href="/sr/" translate="no">', '<a class="logo" href="/sr-cyrl/" translate="no">'),
-    ('<a href="/sr/" aria-current="page">SR</a> · <a href="/sr-cyrl/" lang="sr-Cyrl" hreflang="sr-Cyrl">ЋИР</a>',
-     '<a href="/sr/" lang="sr-Latn" hreflang="sr-Latn">LAT</a> · <a href="/sr-cyrl/" aria-current="page">ЋИР</a>'),
+    ('<a href="/sr/" aria-current="page" lang="sr-Latn">Latinica</a> · <a href="/sr-cyrl/" lang="sr-Cyrl" hreflang="sr-Cyrl">Ћирилица</a>',
+     '<a href="/sr/" lang="sr-Latn" hreflang="sr-Latn">Latinica</a> · <a href="/sr-cyrl/" aria-current="page" lang="sr-Cyrl">Ћирилица</a>'),
 ]
 
 
@@ -136,10 +134,10 @@ def self_check():
                    '<link rel="canonical" href="https://arm24.rs/sr/">'
                    '<meta property="og:url" content="https://arm24.rs/sr/"><meta name="description" content="Softver po meri">'
                    '<style>a{color:red}</style></head><body><a class="logo" href="/sr/" translate="no">ARM<span>24</span></a>'
-                   '<a href="/sr/" aria-current="page">SR</a> · <a href="/sr-cyrl/" lang="sr-Cyrl" hreflang="sr-Cyrl">ЋИР</a>'
+                   '<a href="/sr/" aria-current="page" lang="sr-Latn">Latinica</a> · <a href="/sr-cyrl/" lang="sr-Cyrl" hreflang="sr-Cyrl">Ћирилица</a>'
                    '<p>Usluge &amp; podrška</p><td translate="no">ARTEM PR</td><img alt="Slika"></body></html>')
     for want in ('content="width=device-width"', 'lang="sr-Cyrl"', 'content="Софтвер по мери"', "a{color:red}", "Услуге &amp; подршка",
-                 '<td translate="no">ARTEM PR</td>', 'alt="Слика"', '>ARM<span>24</span>', 'href="https://arm24.rs/sr-cyrl/"', ">LAT</a>"):
+                 '<td translate="no">ARTEM PR</td>', 'alt="Слика"', '>ARM<span>24</span>', 'href="https://arm24.rs/sr-cyrl/"', 'hreflang="sr-Latn">Latinica</a>', 'aria-current="page" lang="sr-Cyrl">Ћирилица</a>'):
         assert want in page, want
     print("self-check ok")
 
