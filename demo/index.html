@@ -226,8 +226,9 @@ function selftest() {
 }
 
 const wantTest = new URLSearchParams(location.search).has("selftest");
+const fromCyrl = new URLSearchParams(location.search).get("nazad") === "cyrl";
 init();
-if (new URLSearchParams(location.search).get("nazad") === "cyrl" || /^https?:\/\/[^/]*\/sr-cyrl\//.test(document.referrer)) $("back").href = "/sr-cyrl/#services";
+if (fromCyrl || /^https?:\/\/[^/]*\/sr-cyrl\//.test(document.referrer)) $("back").href = "/sr-cyrl/#services";
 if (wantTest) {
   try { $("selftest").textContent = selftest(); } catch (e) { $("selftest").textContent = "selftest FAILED: " + e.message; }
 }
