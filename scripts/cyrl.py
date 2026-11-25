@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""Generate sr-cyrl/index.html (Serbian Cyrillic) from sr/index.html (Serbian Latin).
+"""Generate the Serbian Cyrillic pages under sr-cyrl/ from the Serbian Latin pages under sr/ (list in PAGES).
 
-Run after every edit of sr/index.html:  python3 scripts/cyrl.py
+Run after every edit of a page under sr/:  python3 scripts/cyrl.py
 Self-check only:  python3 scripts/cyrl.py --self-check
 
 Text and the attributes alt, aria-label, content (meta) are transliterated. Kept in Latin:
 <script>/<style>, any element with translate="no" or a lang attribute, and words in KEEP
 or containing q, w, x or y (product names such as Python, WhatsApp).
+Links to /sr/... become /sr-cyrl/..., except a link with lang="sr-Latn" (the language switch).
 """
 import os
 import re
@@ -15,7 +16,7 @@ from html.parser import HTMLParser
 from html import escape
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC, OUT = os.path.join(ROOT, "sr/index.html"), os.path.join(ROOT, "sr-cyrl/index.html")
+PAGES = ["", "javni-narucioci/"]  # sr/<page>index.html -> sr-cyrl/<page>index.html
 
 DIGRAPHS = {"Lj": "Љ", "LJ": "Љ", "lj": "љ", "Nj": "Њ", "NJ": "Њ", "nj": "њ", "Dž": "Џ", "DŽ": "Џ", "dž": "џ"}
 SINGLE = dict(zip("abcčćdđefghijklmnoprsštuvzž", "абцчћдђефгхијклмнопрсштувзж"))
@@ -61,6 +62,8 @@ class Conv(HTMLParser):
         res, d = [], dict(attrs)
         meta_text = d.get("name") == "description" or d.get("property") in ("og:title", "og:description")
         for k, v in attrs:
+            if k == "href" and v and v.startswith("/sr/") and d.get("lang") != "sr-Latn":
+                v = "/sr-cyrl/" + v[4:]
             if v is not None and not self.latin() and (k in ("alt", "aria-label") or k == "content" and tag == "meta" and meta_text):
                 v = translit(v)
             res.append(k if v is None else f'{k}="{escape(v, quote=True)}"')
@@ -103,20 +106,25 @@ class Conv(HTMLParser):
         self.out.append(f"<![{data}]>")
 
 
-SWAPS = [  # (Latin page text, Cyrillic page text): page identity, applied before conversion
-    ('<html lang="sr-Latn">', '<html lang="sr-Cyrl">'),
-    ('<link rel="canonical" href="https://arm24.rs/sr/">', '<link rel="canonical" href="https://arm24.rs/sr-cyrl/">'),
-    ('<meta property="og:url" content="https://arm24.rs/sr/">', '<meta property="og:url" content="https://arm24.rs/sr-cyrl/">'),
-    ('<a class="logo" href="/sr/" translate="no">', '<a class="logo" href="/sr-cyrl/" translate="no">'),
-    ('<a href="/demo/">', '<a href="/demo/?nazad=cyrl">'),
-    ('<a href="/sr/" aria-current="page" lang="sr-Latn">Srpski</a> · <a href="/sr-cyrl/" lang="sr-Cyrl" hreflang="sr-Cyrl">Српски</a>',
-     '<a href="/sr/" lang="sr-Latn" hreflang="sr-Latn">Srpski</a> · <a href="/sr-cyrl/" aria-current="page" lang="sr-Cyrl">Српски</a>'),
-]
+def swaps(page):
+    """(Latin page text, Cyrillic page text): page identity, applied before conversion; each must occur once."""
+    lat, cyr = "/sr/" + page, "/sr-cyrl/" + page
+    return [
+        ('<html lang="sr-Latn">', '<html lang="sr-Cyrl">'),
+        (f'<link rel="canonical" href="https://arm24.rs{lat}">', f'<link rel="canonical" href="https://arm24.rs{cyr}">'),
+        (f'<meta property="og:url" content="https://arm24.rs{lat}">', f'<meta property="og:url" content="https://arm24.rs{cyr}">'),
+        (f'<a href="{lat}" aria-current="page" lang="sr-Latn">Srpski</a> · <a href="{cyr}" lang="sr-Cyrl" hreflang="sr-Cyrl">Српски</a>',
+         f'<a href="{lat}" lang="sr-Latn" hreflang="sr-Latn">Srpski</a> · <a href="{cyr}" aria-current="page" lang="sr-Cyrl">Српски</a>'),
+    ] + {
+        "": [('<a href="/demo/">', '<a href="/demo/?nazad=cyrl">'),
+             ('location.replace("/sr/javni-narucioci/")', 'location.replace("/sr-cyrl/javni-narucioci/")')],
+        "javni-narucioci/": [('<a href="/demo/?nazad=jn">', '<a href="/demo/?nazad=cyrl-jn">')],
+    }[page]
 
 
-def convert(src):
-    for a, b in SWAPS:
-        assert src.count(a) == 1, f"expected once in {SRC}: {a}"
+def convert(src, page):
+    for a, b in swaps(page):
+        assert src.count(a) == 1, f"expected once in sr/{page}index.html: {a}"
         src = src.replace(a, b)
     c = Conv()
     c.feed(src)
@@ -136,19 +144,37 @@ def self_check():
                    '<meta property="og:url" content="https://arm24.rs/sr/"><meta name="description" content="Softver po meri">'
                    '<style>a{color:red}</style></head><body><a class="logo" href="/sr/" translate="no">ARM<span>24</span></a>'
                    '<a href="/sr/" aria-current="page" lang="sr-Latn">Srpski</a> · <a href="/sr-cyrl/" lang="sr-Cyrl" hreflang="sr-Cyrl">Српски</a>'
-                   '<a href="/demo/">x</a><p>Usluge &amp; podrška</p><td translate="no">ARTEM PR</td><img alt="Slika"></body></html>')
+                   '<a href="/demo/">x</a><p>Usluge &amp; podrška</p><td translate="no">ARTEM PR</td><img alt="Slika">'
+                   '<script>if(location.hash==="#ponuda")location.replace("/sr/javni-narucioci/")</script>'
+                   '<a href="/sr/javni-narucioci/">Za javne naručioce</a></body></html>', "")
     for want in ('content="width=device-width"', 'lang="sr-Cyrl"', 'content="Софтвер по мери"', "a{color:red}", "Услуге &amp; подршка",
-                 '<td translate="no">ARTEM PR</td>', 'alt="Слика"', '>ARM<span>24</span>', 'href="https://arm24.rs/sr-cyrl/"', 'hreflang="sr-Latn">Srpski</a>', 'aria-current="page" lang="sr-Cyrl">Српски</a>', 'href="/demo/?nazad=cyrl"'):
+                 '<td translate="no">ARTEM PR</td>', 'alt="Слика"', '<a class="logo" href="/sr-cyrl/" translate="no">ARM<span>24</span>',
+                 'href="https://arm24.rs/sr-cyrl/"', '<a href="/sr/" lang="sr-Latn" hreflang="sr-Latn">Srpski</a>',
+                 'aria-current="page" lang="sr-Cyrl">Српски</a>', 'href="/demo/?nazad=cyrl"', 'location.replace("/sr-cyrl/javni-narucioci/")',
+                 '<a href="/sr-cyrl/javni-narucioci/">За јавне наручиоце</a>'):
+        assert want in page, want
+    page = convert('<html lang="sr-Latn"><link rel="canonical" href="https://arm24.rs/sr/javni-narucioci/">'
+                   '<meta property="og:url" content="https://arm24.rs/sr/javni-narucioci/">'
+                   '<link rel="alternate" hreflang="sr-Latn" href="https://arm24.rs/sr/javni-narucioci/">'
+                   '<a class="logo" href="/sr/" translate="no">ARM<span>24</span></a><a href="/sr/#services">usluge</a>'
+                   '<a href="/sr/javni-narucioci/" aria-current="page" lang="sr-Latn">Srpski</a> · '
+                   '<a href="/sr-cyrl/javni-narucioci/" lang="sr-Cyrl" hreflang="sr-Cyrl">Српски</a><a href="/demo/?nazad=jn">x</a></html>',
+                   "javni-narucioci/")
+    for want in ('<link rel="canonical" href="https://arm24.rs/sr-cyrl/javni-narucioci/">', 'content="https://arm24.rs/sr-cyrl/javni-narucioci/"',
+                 'hreflang="sr-Latn" href="https://arm24.rs/sr/javni-narucioci/"', '<a class="logo" href="/sr-cyrl/"',
+                 '<a href="/sr-cyrl/#services">услуге</a>', '<a href="/sr/javni-narucioci/" lang="sr-Latn" hreflang="sr-Latn">Srpski</a>',
+                 '<a href="/sr-cyrl/javni-narucioci/" aria-current="page" lang="sr-Cyrl">Српски</a>', 'href="/demo/?nazad=cyrl-jn"'):
         assert want in page, want
     print("self-check ok")
 
 
 if __name__ == "__main__":
     self_check()
-    if "--self-check" not in sys.argv:
-        os.makedirs(os.path.dirname(OUT), exist_ok=True)
-        with open(SRC, encoding="utf-8") as f:
-            html = convert(f.read())
-        with open(OUT, "w", encoding="utf-8") as f:
+    for page in [] if "--self-check" in sys.argv else PAGES:
+        out = os.path.join(ROOT, "sr-cyrl", page, "index.html")
+        os.makedirs(os.path.dirname(out), exist_ok=True)
+        with open(os.path.join(ROOT, "sr", page, "index.html"), encoding="utf-8") as f:
+            html = convert(f.read(), page)
+        with open(out, "w", encoding="utf-8") as f:
             f.write(html)
-        print(f"wrote {os.path.relpath(OUT, ROOT)}")
+        print(f"wrote {os.path.relpath(out, ROOT)}")

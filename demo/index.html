@@ -141,7 +141,7 @@ function syncUrl() {
   const p = new URLSearchParams(location.search);
   state.open && state.open !== NEW ? p.set("zapis", state.open) : p.delete("zapis");
   state.role === "admin" ? p.set("uloga", "admin") : p.delete("uloga");
-  if (fromCyrl) p.set("nazad", "cyrl");
+  if (back) p.set("nazad", back);
   history.replaceState(null, "", location.pathname + (p.toString() ? "?" + p : ""));
 }
 
@@ -211,6 +211,15 @@ function init() {
   render();
 }
 
+// Return page of "Nazad na sajt": a known ?nazad= key wins, else the referrer, longest path first. Only keys of BACK are ever used.
+const BACK = {"cyrl": "/sr-cyrl/#services", "jn": "/sr/javni-narucioci/#services", "cyrl-jn": "/sr-cyrl/javni-narucioci/#services"};
+function backKey(nazad, ref) {
+  if (Object.hasOwn(BACK, nazad ?? "")) return nazad;
+  for (const [path, key] of [["/sr-cyrl/javni-narucioci/", "cyrl-jn"], ["/sr/javni-narucioci/", "jn"], ["/sr-cyrl/", "cyrl"]])
+    if (ref.startsWith(location.origin + path)) return key;
+  return "";
+}
+
 function selftest() {
   const ok = (c, m) => { if (!c) throw new Error(m); };
   const s = {rows: seed(), role: "clerk", q: "", status: ""};
@@ -234,6 +243,11 @@ function selftest() {
   ok(update(s, "INV-0002", {name: "   "}) === false, "blank name rejected");
   ok(s.rows.filter(r => r.status === "U upotrebi").every(r => r.loc !== "Magacin" && r.person !== "—"), "in-use rows not in stock");
   ok(csv === 'Inventarski broj;Naziv;Lokacija;Zadužen;Status\r\nINV-1;"Monitor 24""";"A;B";Službenik 1;U upotrebi\r\n', "csv text");
+  const o = location.origin;
+  ok(backKey(null, "") === "" && backKey("cyrl", "") === "cyrl" && backKey("jn", "") === "jn" && backKey("cyrl-jn", "") === "cyrl-jn", "nazad keys");
+  ok(backKey("https://evil.example/", "") === "" && backKey("toString", "") === "", "unknown nazad");
+  ok(backKey("jn", o + "/sr-cyrl/javni-narucioci/") === "jn", "nazad key wins over referrer");
+  ok(backKey(null, o + "/sr-cyrl/javni-narucioci/") === "cyrl-jn" && backKey(null, o + "/sr/javni-narucioci/") === "jn" && backKey(null, o + "/sr-cyrl/") === "cyrl", "referrer");
   // UI flows on the live page state
   const saved = {role: state.role, open: state.open};
   state.role = "admin"; render();
@@ -254,9 +268,9 @@ function selftest() {
 }
 
 const wantTest = new URLSearchParams(location.search).has("selftest");
-let fromCyrl = new URLSearchParams(location.search).get("nazad") === "cyrl" || document.referrer.startsWith(location.origin + "/sr-cyrl/");
+const back = backKey(new URLSearchParams(location.search).get("nazad"), document.referrer);
 init();
-if (fromCyrl) { $("back").href = "/sr-cyrl/#services"; $("logo").href = "/sr-cyrl/"; }
+if (back) { $("back").href = BACK[back]; $("logo").href = back.startsWith("cyrl") ? "/sr-cyrl/" : "/sr/"; }
 if (wantTest) {
   try { $("selftest").textContent = selftest(); } catch (e) { $("selftest").textContent = "selftest FAILED: " + e.message; }
 }
