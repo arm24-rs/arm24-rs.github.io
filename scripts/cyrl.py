@@ -25,15 +25,18 @@ KEEP = {"ARM24", "API", "AI", "AWS", "CI", "CD", "CPV", "SDK", "MCP", "IP", "Goo
         "GitHub", "Pages", "Business", "GmbH", "Vue", "js", "SPSS", "R", "OneTick", "Comcon", "Research",
         "backend", "Backend", "cloud", "spoofing", "Gemini", "Claude", "Senior", "Lead", "Software", "Engineer",
         "Analyst", "DinaCard", "LAT"}
+# Words where lj, nj or dž are two letters, not a digraph.
+SPLIT = {"nadž": 2, "podž": 2, "konjunk": 2, "injek": 1}  # substring: offset of the two letters
 WORD = re.compile(r"[A-Za-zČĆŽŠĐčćžšđ]+")
 
 
 def word(w):
     if w in KEEP or re.search(r"[qwxyQWXY]", w):
         return w
-    out, i = [], 0
+    out, i, low = [], 0, w.lower()
+    split = {low.find(p) + off for p, off in SPLIT.items() if p in low}
     while i < len(w):
-        if w[i:i + 2] in DIGRAPHS:
+        if w[i:i + 2] in DIGRAPHS and i not in split:
             out.append(DIGRAPHS[w[i:i + 2]]); i += 2
         else:
             out.append(SINGLE.get(w[i], w[i])); i += 1
@@ -119,6 +122,7 @@ def convert(src):
 def self_check():
     assert translit("Ljubljana Njegoš džep LJUBAV") == "Љубљана Његош џеп ЉУБАВ"
     assert translit("nadogradnje, Novi Sad.") == "надоградње, Нови Сад."
+    assert translit("nadživeti podžanr konjunktura injekcija") == "надживети поджанр конјунктура инјекција"
     assert translit("API-ja Python WhatsApp ARM24 360dialog artem@arm24.rs") == "API-ја Python WhatsApp ARM24 360dialog artem@arm24.rs"
     assert translit("CPV 72262000 i Google Cloud") == "CPV 72262000 и Google Cloud"
     page = convert('<!doctype html><html lang="sr-Latn"><head><meta name="viewport" content="width=device-width">'
