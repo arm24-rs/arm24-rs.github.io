@@ -22,6 +22,16 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://arm24.rs/"/>
   </url>
   <url>
+    <loc>https://arm24.rs/sr/javni-narucioci/</loc>
+    <xhtml:link rel="alternate" hreflang="sr-Latn" href="https://arm24.rs/sr/javni-narucioci/"/>
+    <xhtml:link rel="alternate" hreflang="sr-Cyrl" href="https://arm24.rs/sr-cyrl/javni-narucioci/"/>
+  </url>
+  <url>
+    <loc>https://arm24.rs/sr-cyrl/javni-narucioci/</loc>
+    <xhtml:link rel="alternate" hreflang="sr-Latn" href="https://arm24.rs/sr/javni-narucioci/"/>
+    <xhtml:link rel="alternate" hreflang="sr-Cyrl" href="https://arm24.rs/sr-cyrl/javni-narucioci/"/>
+  </url>
+  <url>
     <loc>https://arm24.rs/demo/</loc>
   </url>
 </urlset>
