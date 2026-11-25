@@ -36,6 +36,7 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vert
 th{font-size:14px;color:var(--muted);background:var(--bg2)}
 tr:last-child td{border-bottom:0}
 td button{padding:0;border:0;background:none;color:var(--accent);text-decoration:underline;font-weight:600}
+.st.s1{background:#fff4d6;color:#6b4e00}.st.s3{background:#fde2e2;color:#8a1c1c}
 .st{display:inline-block;font-size:13px;border-radius:999px;padding:1px 10px;border:1px solid var(--line);background:var(--bg2);white-space:nowrap}
 .count{color:var(--muted);font-size:14px;margin:8px 0 40px}
 .panel{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:20px;margin:0 0 40px}
@@ -52,11 +53,11 @@ footer{padding:24px 0;color:var(--muted);font-size:14px;border-top:1px solid var
 </style>
 </head>
 <body>
-<header><div class="wrap"><a class="logo" href="/sr/" translate="no">ARM<span>24</span></a><a href="/sr/#services">Nazad na sajt</a></div></header>
+<header><div class="wrap"><a class="logo" href="/sr/" translate="no">ARM<span>24</span></a><a id="back" href="/sr/#services">Nazad na sajt</a></div></header>
 <div class="banner" role="note"><div class="wrap"><p>Primer napravljen za ovaj sajt, sa izmišljenim podacima. Nije gotov proizvod niti posao rađen za klijenta; ovakva aplikacija se pravi po meri. Podaci se ne čuvaju.</p></div></div>
 <main class="wrap">
   <h1>Evidencija opreme</h1>
-  <p class="sub">Primer evidencije sa pretragom, korisničkim ulogama, istorijom izmena i izvozom u CSV.</p>
+  <p class="sub">Primer evidencije sa pretragom, korisničkim ulogama, istorijom izmena i izvozom u CSV. Ovde se uloga bira iz liste; u pravoj aplikaciji zavisi od prijave korisnika.</p>
   <div class="bar">
     <label class="field">Pretraga<input type="search" id="q" placeholder="broj, naziv, lokacija…"></label>
     <label class="field">Status<select id="fs"><option value="">Svi statusi</option></select></label>
@@ -70,7 +71,7 @@ footer{padding:24px 0;color:var(--muted);font-size:14px;border-top:1px solid var
   <p class="count" id="count" aria-live="polite"></p>
   <p id="selftest" class="msg"></p>
 </main>
-<footer><div class="wrap">ARM24, Novi Sad · <a href="/sr/#ponuda">Zatražite ponudu za aplikaciju po meri</a></div></footer>
+<footer><div class="wrap">Aplikaciju po meri možete zatražiti na <a href="mailto:artem@arm24.rs" translate="no">artem@arm24.rs</a> ili na telefon <a href="tel:+381654809802">065&nbsp;480&nbsp;9802</a>.<br><span translate="no">ARTEM MASHKOVSKII PREDUZETNIK RAČUNARSKO PROGRAMIRANJE ARM24 NOVI SAD</span> · Mite Ružića 2, Novi Sad · MB 67443187 · PIB 114263963</div></footer>
 <script>
 "use strict";
 const STATUSES = ["U upotrebi", "Na servisu", "Na zalihama", "Otpisano"];
@@ -85,7 +86,7 @@ function seed() {
   for (let i = 0; i < 25; i++) {
     const r = {id: "INV-" + String(i + 1).padStart(4, "0"), name: NAMES[i % NAMES.length], loc: LOCS[(i * 3) % LOCS.length],
       person: PEOPLE[i % 5], status: STATUSES[i % 7 === 3 ? 1 : i % 11 === 5 ? 3 : i % 6 === 4 ? 2 : 0], hist: []};
-    r.hist.push({when: day(1 + (i * 5) % 27, 1 + i % 12, 2025), who: "Administrator", what: "Zapis kreiran"});
+    r.hist.push({when: day(1 + (i * 5) % 27, 1 + i % 12, 2025), who: "Administrator", what: "Zapis unet"});
     if (i % 3 === 0) r.hist.push({when: day(1 + (i * 7) % 27, 1 + (i + 4) % 12, 2026), who: "Administrator", what: "Lokacija: Magacin → " + r.loc});
     if (r.status === "Na servisu") r.hist.push({when: day(3 + i % 20, 10, 2026), who: "Administrator", what: "Status: U upotrebi → Na servisu"});
     out.push(r);
@@ -120,7 +121,7 @@ function add(s, rec) {
   const id = "INV-" + String(s.rows.length + 1).padStart(4, "0");
   const now = new Date();
   s.rows.push({id, name: rec.name, loc: rec.loc, person: rec.person, status: rec.status,
-    hist: [{when: day(now.getDate(), now.getMonth() + 1, now.getFullYear()), who: "Administrator", what: "Zapis kreiran"}]});
+    hist: [{when: day(now.getDate(), now.getMonth() + 1, now.getFullYear()), who: "Administrator", what: "Zapis unet"}]});
   return id;
 }
 
@@ -142,7 +143,7 @@ function syncUrl() {
 
 function renderList() {
   const rows = filtered(state);
-  $("rows").innerHTML = rows.map(r => `<tr><td data-l="Inventarski broj"><button type="button" data-id="${r.id}">${r.id}</button></td><td data-l="Naziv">${esc(r.name)}</td><td data-l="Lokacija">${esc(r.loc)}</td><td data-l="Zadužen">${esc(r.person)}</td><td data-l="Status"><span class="st">${esc(r.status)}</span></td></tr>`).join("");
+  $("rows").innerHTML = rows.map(r => `<tr><td data-l="Inventarski broj"><button type="button" data-id="${r.id}">${r.id}</button></td><td data-l="Naziv">${esc(r.name)}</td><td data-l="Lokacija">${esc(r.loc)}</td><td data-l="Zadužen">${esc(r.person)}</td><td data-l="Status"><span class="st s${STATUSES.indexOf(r.status)}">${esc(r.status)}</span></td></tr>`).join("");
   $("count").textContent = `Prikazano ${rows.length} od ${state.rows.length} zapisa.`;
   $("add").hidden = state.role !== "admin";
 }
@@ -152,7 +153,7 @@ function renderRec() {
   if (!r) { box.hidden = true; box.innerHTML = ""; return; }
   box.hidden = false;
   const admin = state.role === "admin";
-  let html = `<h2>${r.id}: ${esc(r.name)}</h2>`;
+  let html = `<h2>Zapis ${r.id}</h2>`;
   if (admin && state.editing) {
     html += `<form id="ef" class="form"><label class="field">Naziv<input name="name" value="${esc(r.name)}" required></label>
       <label class="field">Lokacija<select name="loc">${opts(LOCS, r.loc)}</select></label>
@@ -224,6 +225,7 @@ function selftest() {
 
 const wantTest = new URLSearchParams(location.search).has("selftest");
 init();
+if (/^https?:\/\/[^/]*\/sr-cyrl\//.test(document.referrer) && new URL(document.referrer).host === location.host) $("back").href = "/sr-cyrl/#services";
 if (wantTest) {
   try { $("selftest").textContent = selftest(); } catch (e) { $("selftest").textContent = "selftest FAILED: " + e.message; }
 }

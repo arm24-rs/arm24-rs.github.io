@@ -108,8 +108,8 @@ SWAPS = [  # (Latin page text, Cyrillic page text): page identity, applied befor
     ('<link rel="canonical" href="https://arm24.rs/sr/">', '<link rel="canonical" href="https://arm24.rs/sr-cyrl/">'),
     ('<meta property="og:url" content="https://arm24.rs/sr/">', '<meta property="og:url" content="https://arm24.rs/sr-cyrl/">'),
     ('<a class="logo" href="/sr/" translate="no">', '<a class="logo" href="/sr-cyrl/" translate="no">'),
-    ('<a href="/sr/" aria-current="page" lang="sr-Latn">Latinica</a> · <a href="/sr-cyrl/" lang="sr-Cyrl" hreflang="sr-Cyrl">Ћирилица</a>',
-     '<a href="/sr/" lang="sr-Latn" hreflang="sr-Latn">Latinica</a> · <a href="/sr-cyrl/" aria-current="page" lang="sr-Cyrl">Ћирилица</a>'),
+    ('<a href="/sr/" aria-current="page" lang="sr-Latn">Srpski</a> · <a href="/sr-cyrl/" lang="sr-Cyrl" hreflang="sr-Cyrl">Српски</a>',
+     '<a href="/sr/" lang="sr-Latn" hreflang="sr-Latn">Srpski</a> · <a href="/sr-cyrl/" aria-current="page" lang="sr-Cyrl">Српски</a>'),
 ]
 
 
@@ -134,10 +134,10 @@ def self_check():
                    '<link rel="canonical" href="https://arm24.rs/sr/">'
                    '<meta property="og:url" content="https://arm24.rs/sr/"><meta name="description" content="Softver po meri">'
                    '<style>a{color:red}</style></head><body><a class="logo" href="/sr/" translate="no">ARM<span>24</span></a>'
-                   '<a href="/sr/" aria-current="page" lang="sr-Latn">Latinica</a> · <a href="/sr-cyrl/" lang="sr-Cyrl" hreflang="sr-Cyrl">Ћирилица</a>'
+                   '<a href="/sr/" aria-current="page" lang="sr-Latn">Srpski</a> · <a href="/sr-cyrl/" lang="sr-Cyrl" hreflang="sr-Cyrl">Српски</a>'
                    '<p>Usluge &amp; podrška</p><td translate="no">ARTEM PR</td><img alt="Slika"></body></html>')
     for want in ('content="width=device-width"', 'lang="sr-Cyrl"', 'content="Софтвер по мери"', "a{color:red}", "Услуге &amp; подршка",
-                 '<td translate="no">ARTEM PR</td>', 'alt="Слика"', '>ARM<span>24</span>', 'href="https://arm24.rs/sr-cyrl/"', 'hreflang="sr-Latn">Latinica</a>', 'aria-current="page" lang="sr-Cyrl">Ћирилица</a>'):
+                 '<td translate="no">ARTEM PR</td>', 'alt="Слика"', '>ARM<span>24</span>', 'href="https://arm24.rs/sr-cyrl/"', 'hreflang="sr-Latn">Srpski</a>', 'aria-current="page" lang="sr-Cyrl">Српски</a>'):
         assert want in page, want
     print("self-check ok")
 
