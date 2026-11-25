@@ -3,42 +3,58 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ARM24 — Software Development, Novi Sad</title>
-<meta name="description" content="ARM24 is a software development company in Novi Sad, Serbia: backend services, cloud infrastructure and technical consulting for EU clients.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<title>ARM24 — Custom Software Development, Novi Sad, Serbia</title>
+<meta name="description" content="ARM24 is a software development company in Novi Sad, Serbia: custom backend software, APIs, cloud infrastructure and AI integration, delivered by a senior engineer.">
+<link rel="canonical" href="https://arm24.rs/">
+<link rel="alternate" hreflang="en" href="https://arm24.rs/">
+<link rel="alternate" hreflang="sr-Latn" href="https://arm24.rs/sr/">
+<link rel="alternate" hreflang="sr-Cyrl" href="https://arm24.rs/sr-cyrl/">
+<link rel="alternate" hreflang="x-default" href="https://arm24.rs/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://arm24.rs/">
+<meta property="og:title" content="ARM24 — Custom Software Development, Novi Sad">
+<meta property="og:description" content="Custom backend software, APIs, cloud infrastructure and AI integration, delivered by a senior engineer in Novi Sad, Serbia.">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="sr_RS">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%234f7cff'/><text x='32' y='42' font-family='Arial' font-weight='700' font-size='24' text-anchor='middle' fill='white'>24</text></svg>">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":"ARM24","legalName":"ARTEM MASHKOVSKII PREDUZETNIK RAČUNARSKO PROGRAMIRANJE ARM24 NOVI SAD","alternateName":"ARTEM MASHKOVSKII PR ARM24 NOVI SAD","url":"https://arm24.rs/","email":"artem@arm24.rs","telephone":"+381654809802","taxID":"114263963","identifier":{"@type":"PropertyValue","propertyID":"MB","value":"67443187"},"foundingDate":"2024-05-01","address":{"@type":"PostalAddress","streetAddress":"Mite Ružića 2","addressLocality":"Novi Sad","addressCountry":"RS"},"founder":{"@type":"Person","name":"Artem Mashkovskii"}}
+</script>
 <style>
 :root{
   --bg:#ffffff;--bg2:#f5f7fb;--fg:#0f172a;--muted:#5b6475;--line:#e3e7ef;
-  --accent:#3b6cff;--accent2:#7c4dff;--card:#ffffff;
+  --accent:#2b5ce6;--accent2:#7c4dff;--card:#ffffff;--on-accent:#ffffff;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
 }
 @media (prefers-color-scheme:dark){:root{
   --bg:#0b0d12;--bg2:#11151d;--fg:#e7e9ee;--muted:#9aa3b2;--line:#222837;
-  --accent:#6f95ff;--accent2:#a083ff;--card:#141924;
+  --accent:#6f95ff;--accent2:#a083ff;--card:#141924;--on-accent:#0b0d12;
 }}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
 a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+p a,li a,.note a{text-decoration:underline;text-underline-offset:2px}
 .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
 header{position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);background:color-mix(in srgb,var(--bg) 80%,transparent);border-bottom:1px solid var(--line)}
-nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+nav{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px}
 .logo{font-weight:700;font-size:20px;letter-spacing:-.02em;color:var(--fg)}
 .logo span{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
-nav ul{display:flex;gap:24px;list-style:none;margin:0;padding:0}
-nav ul a{color:var(--muted);font-weight:500;font-size:15px}nav ul a:hover{color:var(--fg);text-decoration:none}
+nav ul{display:flex;flex-wrap:wrap;gap:4px 24px;list-style:none;margin:0;padding:0}
+nav ul a{color:var(--muted);font-weight:500;font-size:15px;text-decoration:none}nav ul a:hover{color:var(--fg);text-decoration:none}
+nav ul a[aria-current]{color:var(--fg)}
+.lang{border-left:1px solid var(--line);padding-left:20px}
 .hero{padding:110px 0 90px;position:relative;overflow:hidden}
 .hero::before{content:"";position:absolute;inset:-40% -10% auto auto;width:700px;height:700px;border-radius:50%;
   background:radial-gradient(circle,color-mix(in srgb,var(--accent) 22%,transparent),transparent 65%);z-index:-1}
-.tag{display:inline-block;font:500 13px "JetBrains Mono",monospace;color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:4px 12px;margin-bottom:22px}
+.tag{display:inline-block;font:500 13px var(--mono);color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:4px 12px;margin-bottom:22px}
 h1{font-size:clamp(36px,6vw,62px);line-height:1.08;letter-spacing:-.035em;margin:0 0 22px;max-width:820px}
 h1 em{font-style:normal;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
 .lead{font-size:19px;color:var(--muted);max-width:640px;margin:0 0 34px}
 .btns{display:flex;gap:12px;flex-wrap:wrap}
 .btn{display:inline-block;padding:12px 22px;border-radius:10px;font-weight:600;border:1px solid var(--line);color:var(--fg)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .btn:hover{text-decoration:none;transform:translateY(-1px)}
 section{padding:80px 0;border-top:1px solid var(--line)}
 section.alt{background:var(--bg2)}
@@ -50,151 +66,140 @@ h2{font-size:clamp(28px,4vw,38px);letter-spacing:-.025em;margin:0 0 12px}
 .card h3{margin:14px 0 8px;font-size:19px}.card p{margin:0 0 16px;color:var(--muted)}
 .icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{font:500 12px "JetBrains Mono",monospace;padding:3px 9px;border-radius:6px;background:var(--bg2);border:1px solid var(--line);color:var(--muted)}
-.client{display:grid;gap:32px;grid-template-columns:1.2fr 1fr;align-items:start}
-.client ul{padding-left:18px;margin:0;color:var(--muted)}.client li{margin:6px 0}
-.timeline{list-style:none;margin:0;padding:0;border-left:2px solid var(--line)}
-.timeline li{position:relative;padding:0 0 26px 24px}
-.timeline li::before{content:"";position:absolute;left:-7px;top:7px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--bg2)}
-.timeline .when{font:500 13px "JetBrains Mono",monospace;color:var(--accent)}
+.chip{font:500 12px var(--mono);padding:3px 9px;border-radius:6px;background:var(--bg2);border:1px solid var(--line);color:var(--muted)}
+.timeline{list-style:none;margin:24px 0 0;padding:0;border-left:2px solid var(--line)}
+.timeline li{position:relative;padding:0 0 22px 24px}
+.timeline li::before{content:"";position:absolute;left:-7px;top:7px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--bg)}
+.timeline .when{font:500 13px var(--mono);color:var(--accent)}
 .timeline b{display:block}.timeline span{color:var(--muted)}
 table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 td{padding:14px 20px;border-bottom:1px solid var(--line);vertical-align:top}
 tr:last-child td{border-bottom:0}
 td:first-child{color:var(--muted);width:34%;white-space:nowrap}
 td:last-child{font-weight:500}
-.founder{display:grid;grid-template-columns:220px 1fr;gap:40px;align-items:center}
-.avatar{position:relative;width:220px;height:220px;border-radius:24px;overflow:hidden;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#fff;font:700 64px Inter,sans-serif;letter-spacing:-.04em}
+.founder{display:grid;grid-template-columns:220px 1fr;gap:40px;align-items:start}
+.avatar{position:relative;width:220px;height:220px;border-radius:24px;overflow:hidden;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#fff;font:700 64px var(--sans);letter-spacing:-.04em}
 .avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
 .fact{border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-size:14px;color:var(--muted);background:var(--card)}
 .fact b{color:var(--fg)}
-.partner .meta{font:500 13px "JetBrains Mono",monospace;color:var(--accent)}
+.partner .meta{font:500 13px var(--mono);color:var(--accent)}
 .partner ul{padding-left:18px;margin:0 0 16px;color:var(--muted)}.partner li{margin:5px 0}
 .partner.main{grid-column:1/-1}
 .contact{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.note{color:var(--muted);font-size:14px;max-width:760px;margin:0}
 footer{padding:28px 0;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
-@media (max-width:760px){.founder{grid-template-columns:1fr}.avatar{width:160px;height:160px;font-size:48px}nav ul{display:none}.client{grid-template-columns:1fr}td:first-child{white-space:normal}.hero{padding:70px 0 60px}}
+@media (max-width:760px){nav{flex-wrap:wrap;padding:10px 0}nav ul{gap:4px 16px}.lang{border:0;padding:0}.founder{grid-template-columns:1fr}.avatar{width:160px;height:160px;font-size:48px}td:first-child{white-space:normal}.hero{padding:70px 0 60px}}
 </style>
 </head>
 <body>
-<header><div class="wrap"><nav>
-  <a class="logo" href="#">ARM<span>24</span></a>
-  <ul><li><a href="#services">Services</a></li><li><a href="#ai">AI</a></li><li><a href="#partners">Partners</a></li><li><a href="#founder">Founder</a></li><li><a href="#company">Company</a></li><li><a href="#contact">Contact</a></li></ul>
+<header><div class="wrap"><nav aria-label="Main">
+  <a class="logo" href="/">ARM<span>24</span></a>
+  <ul><li><a href="#services">Services</a></li><li><a href="#ai">How it works</a></li><li><a href="#partners">Clients</a></li><li><a href="#founder">Founder</a></li><li><a href="#company">Company</a></li><li><a href="#contact">Contact</a></li><li class="lang"><a href="/" aria-current="page" lang="en">EN</a> · <a href="/sr/" lang="sr-Latn" hreflang="sr-Latn">SR</a> · <a href="/sr-cyrl/" lang="sr-Cyrl" hreflang="sr-Cyrl">ЋИР</a></li></ul>
 </nav></div></header>
 
 <main>
 <div class="hero"><div class="wrap">
-  <div class="tag">Novi Sad, Serbia · since 2022</div>
-  <h1>Backend engineering for <em>messaging and data platforms</em></h1>
-  <p class="lead">ARM24 is a software development company. We design, build and run backend services, APIs and cloud infrastructure for clients in the EU, under long-term remote service contracts. We put AI to work in our clients’ products and in our own engineering process.</p>
-  <div class="btns"><a class="btn primary" href="#contact">Get in touch</a><a class="btn" href="#services">What we do</a></div>
+  <div class="tag">Novi Sad, Serbia</div>
+  <h1>Custom backend software and <em>cloud systems</em></h1>
+  <p class="lead">ARM24 is a software development company in Novi Sad. Its owner, a senior backend engineer with more than ten years in software and data, plans, builds and runs every project himself, with AI-assisted delivery, and reviews every change.</p>
+  <div class="btns"><a class="btn primary" href="#contact">Get in touch</a><a class="btn" href="#services">Services</a></div>
 </div></div>
 
 <section id="services" class="alt"><div class="wrap">
   <h2>Services</h2>
-  <p class="sub">Software development and consulting, billed monthly in EUR.</p>
+  <p class="sub">Fixed-scope projects or monthly service contracts, invoiced by ARM24.</p>
   <div class="grid g4">
     <div class="card">
-      <div class="icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></svg></div>
+      <div class="icon" aria-hidden="true"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></svg></div>
       <h3>Software development</h3>
-      <p>Backend services and REST APIs: authentication, billing integrations, message processing, data pipelines.</p>
-      <div class="chips"><span class="chip">python</span><span class="chip">fastapi</span><span class="chip">postgresql</span><span class="chip">mongodb</span><span class="chip">redis</span><span class="chip">pub/sub</span></div>
+      <p>Backend services and REST APIs: authentication and access control, billing and usage data, integrations, data pipelines.</p>
+      <div class="chips"><span class="chip">python</span><span class="chip">fastapi</span><span class="chip">postgresql</span><span class="chip">mongodb</span><span class="chip">redis</span><span class="chip">airflow</span></div>
     </div>
     <div class="card">
-      <div class="icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg></div>
+      <div class="icon" aria-hidden="true"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg></div>
       <h3>Cloud infrastructure</h3>
-      <p>Containerised deployments, Kubernetes with Helm and GitOps, CI/CD pipelines, monitoring and alerting.</p>
-      <div class="chips"><span class="chip">gcp</span><span class="chip">aws</span><span class="chip">kubernetes</span><span class="chip">gitops</span><span class="chip">grafana</span></div>
+      <p>Containerised deployments on Kubernetes, CI/CD pipelines, monitoring and alerting, on Google Cloud or AWS.</p>
+      <div class="chips"><span class="chip">gcp</span><span class="chip">aws</span><span class="chip">docker</span><span class="chip">kubernetes</span><span class="chip">ci/cd</span></div>
     </div>
     <div class="card">
-      <div class="icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
+      <div class="icon" aria-hidden="true"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
       <h3>Technical consulting</h3>
-      <p>Architecture and code review, production incident investigation and root-cause analysis, planning of complex projects.</p>
+      <p>Architecture and code review, production incident investigation and root-cause analysis, technical specifications.</p>
       <div class="chips"><span class="chip">architecture</span><span class="chip">code review</span><span class="chip">incidents</span></div>
     </div>
     <div class="card">
-      <div class="icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <div class="icon" aria-hidden="true"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg></div>
       <h3>AI integration</h3>
-      <p>LLM agents inside products, MCP servers that connect AI assistants to business systems, and AI-assisted development and code review.</p>
+      <p>LLM agents inside products, and connections between AI assistants and business systems.</p>
       <div class="chips"><span class="chip">gemini</span><span class="chip">claude</span><span class="chip">mcp</span><span class="chip">agents</span></div>
     </div>
   </div>
 </div></section>
 
 <section id="ai"><div class="wrap">
-  <h2>AI in practice</h2>
-  <p class="sub">Not a buzzword for us: AI runs in production systems we built, and in the way we build them.</p>
+  <h2>How ARM24 works</h2>
+  <p class="sub">One accountable senior engineer. AI agents do much of the routine work; he plans, checks and signs off every step.</p>
   <div class="grid">
-    <div class="card"><h3>AI agents in products</h3><p>A WhatsApp message-template agent on Gemini: a user describes what they need and gets a template that passes Meta review in a few clicks. Includes Meta rejection rules, per-conversation cost caps and model benchmarking.</p></div>
-    <div class="card"><h3>MCP integrations</h3><p>Model Context Protocol server that lets AI assistants work with a messaging platform’s data and APIs securely, with proper authentication scopes.</p></div>
-    <div class="card"><h3>AI-assisted delivery</h3><p>An agent workflow that takes a ticket from plan to tested pull request with two or three human messages, plus an automated reviewer that checks pull requests against the ticket and a checklist. A human engineer reviews every change.</p></div>
+    <div class="card"><h3>Plan before code</h3><p>Every task starts with a written plan: what changes, what it affects, how it will be checked. Independent AI reviews challenge the plan, and work starts only after it is approved.</p></div>
+    <div class="card"><h3>AI-assisted delivery</h3><p>An agent workflow takes a task from plan to tested change, and an automated reviewer checks the result against the task and a checklist. The engineer reviews every change before it ships.</p></div>
+    <div class="card"><h3>Production experience</h3><p>Releases, on-call and incident investigation on a platform in daily production use since 2021, plus earlier work on a market surveillance system for financial institutions.</p></div>
   </div>
 </div></section>
 
 <section id="partners" class="alt"><div class="wrap">
-  <h2>Partners</h2>
-  <p class="sub">Companies we and our founder have worked with, and what was delivered.</p>
+  <h2>Clients</h2>
+  <p class="sub">ARM24's client, and earlier contract work of its owner, described by sector.</p>
   <div class="grid">
     <div class="card partner main">
-      <div class="meta">Germany · 2021 — now · main client of ARM24</div>
-      <h3><a href="https://www.360dialog.com/" rel="noopener">360dialog GmbH</a> — WhatsApp Business API platform</h3>
+      <div class="meta">Germany · client of ARM24 since May 2024 · the owner's client since November 2021</div>
+      <h3><a href="https://www.360dialog.com/" rel="noopener">360dialog GmbH</a> — official WhatsApp Business API provider</h3>
       <ul>
-        <li>Rolled out a new identity and access management system for 180,000+ users with zero downtime</li>
-        <li>Designed and launched an auto-scaling proxy that centralises all Meta API traffic for security, rate limiting and monitoring</li>
-        <li>Built the AI template agent, the MCP server integration and AI-assisted development tooling</li>
-        <li>Built shared internal packages for monitoring, databases, logging and authentication that cut new-service delivery from days to hours</li>
-        <li>Integrations with WhatsApp, Google Analytics, Brevo, Mixpanel, SendGrid and Sentry</li>
-        <li>On-call duty, incident investigation, code review and mentoring</li>
+        <li>Senior backend engineer (contractor): Python services and APIs on Google Cloud and Kubernetes</li>
+        <li>Work on 360dialog's <a href="https://docs.360dialog.com/docs/get-started/mcp" rel="noopener">MCP server</a>, which gives AI assistants scoped access to a 360dialog account</li>
+        <li>Production releases, on-call duty and incident investigation</li>
       </ul>
       <div class="chips"><span class="chip">python</span><span class="chip">fastapi</span><span class="chip">postgresql</span><span class="chip">redis</span><span class="chip">gcp</span><span class="chip">kubernetes</span><span class="chip">llm</span></div>
     </div>
     <div class="card partner">
-      <div class="meta">USA · financial markets</div>
-      <h3><a href="https://www.onetick.com" rel="noopener">OneTick</a></h3>
-      <ul>
-        <li>Led a team of 4–12 engineers building a market surveillance system that processes billions of transactions</li>
-        <li>Delivered it to the top US stock exchange and Credit Suisse</li>
-        <li>Built surveillance alerts for wash trading and spoofing</li>
-      </ul>
+      <div class="meta">USA · healthcare payments · 2021</div>
+      <h3>Python SDK for payment policies</h3>
+      <ul><li>Improved the SDK so that adding a payment policy took minutes instead of days</li><li>Mentored other contractors</li></ul>
     </div>
     <div class="card partner">
-      <div class="meta">USA · healthcare and life sciences</div>
-      <h3>Rialtic · Quantori</h3>
-      <ul>
-        <li>Healthcare policy engines in Python; library work cut new policy integration from days to minutes</li>
-        <li>Prototype AWS cluster controller for scalable bioinformatics computations</li>
-        <li>Internal search for a US medical company</li>
-      </ul>
+      <div class="meta">Life-science software · 2021</div>
+      <h3>Cloud cluster controller</h3>
+      <ul><li>Prototype web controller for AWS computation clusters</li></ul>
     </div>
     <div class="card partner">
-      <div class="meta">Data and research</div>
-      <h3>Particle.One · Urent · Comcon</h3>
-      <ul>
-        <li>Market data pipelines, backend services and a Vue.js app for data exploration</li>
-        <li>Scooter allocation prediction pipeline; refactoring cut run time from 30 minutes to 10 seconds</li>
-        <li>Marketing and social data analysis with R, Python and SPSS</li>
-      </ul>
+      <div class="meta">Market data · 2020–2021</div>
+      <h3>Data pipelines and search</h3>
+      <ul><li>Data pipelines, backend services and a Vue.js search app</li></ul>
     </div>
   </div>
 </div></section>
 
 <section id="founder"><div class="wrap founder">
-  <div class="avatar">AM<img src="photo.png" alt="Artem Mashkovskii" onerror="this.remove()"></div>
+  <div class="avatar">AM<img src="/photo.png" alt="Artem Mashkovskii" width="220" height="220" onerror="this.remove()"></div>
   <div>
     <h2>Artem Mashkovskii</h2>
-    <p class="sub" style="margin-bottom:0">Founder and managing director of ARM24. Staff software engineer with more than ten years in software and data: Python backends, cloud architecture, microservices, AI integration and market surveillance systems. Takes work from problem definition to production release.</p>
+    <p class="sub" style="margin-bottom:0">Owner (preduzetnik) of ARM24. Senior backend engineer with more than ten years in software and data: Python backends, cloud architecture, microservices, AI integration and market surveillance systems. Takes work from problem definition to production release.</p>
+    <ul class="timeline">
+      <li><div class="when">2021 — now</div><b>Senior Backend Engineer, 360dialog GmbH</b><span>contractor; through ARM24 since May 2024</span></li>
+      <li><div class="when">2017 — 2020</div><b>Lead Software Engineer, <a href="https://www.onetick.com" rel="noopener">OneTick</a></b><span>Led 4–12 engineers building a market surveillance system that processes billions of transactions overnight; built the wash-trade and spoofing alerts; integrated it for dozens of financial institutions.</span></li>
+      <li><div class="when">2015 — 2016</div><b>Senior Analyst, Comcon Research</b><span>Market research: survey data analysis in R, Python and SPSS.</span></li>
+    </ul>
     <div class="facts">
       <div class="fact"><b>MSc</b> Applied Mathematics and Informatics, Saint Petersburg State University</div>
       <div class="fact"><b>Top 20</b> All-Russian Math Olympiad 2007</div>
-      <div class="fact"><b>Based in</b> Novi Sad, Serbia</div>
+      <div class="fact"><b>Based in</b> Novi Sad, Serbia, since 2022</div>
     </div>
   </div>
 </div></section>
 
 <section id="company" class="alt"><div class="wrap">
   <h2>Company details</h2>
-  <p class="sub">Registered with the Serbian Business Registers Agency (APR).</p>
+  <p class="sub">Registered with the Serbian Business Registers Agency (<a href="https://www.apr.gov.rs/" rel="noopener">APR</a>).</p>
   <table>
     <tr><td>Legal name</td><td>ARTEM MASHKOVSKII PREDUZETNIK RAČUNARSKO PROGRAMIRANJE ARM24 NOVI SAD</td></tr>
     <tr><td>Short name</td><td>ARTEM MASHKOVSKII PR ARM24 NOVI SAD</td></tr>
@@ -204,19 +209,19 @@ footer{padding:28px 0;color:var(--muted);font-size:14px;border-top:1px solid var
     <tr><td>Registration number (MB)</td><td>67443187</td></tr>
     <tr><td>Tax ID (PIB)</td><td>114263963</td></tr>
     <tr><td>Activity</td><td>6201 — Computer programming</td></tr>
-    <tr><td>Managing director</td><td>Artem Mashkovskii</td></tr>
+    <tr><td>Owner</td><td>Artem Mashkovskii</td></tr>
   </table>
 </div></section>
 
-<section id="contact"><div class="wrap contact">
-  <div>
-    <h2>Contact</h2>
-    <p class="sub" style="margin:0">Mite Ružića 2, Novi Sad, Serbia<br>Phone: <a href="tel:+381654809802">+381 65 4809802</a></p>
+<section id="contact"><div class="wrap">
+  <div class="contact">
+    <div>
+      <h2>Contact</h2>
+      <p class="sub" style="margin:0">Mite Ružića 2, Novi Sad, Serbia<br>Phone: <a href="tel:+381654809802">+381&nbsp;65&nbsp;4809802</a></p>
+    </div>
+    <div class="btns"><a class="btn primary" href="mailto:artem@arm24.rs">artem@arm24.rs</a></div>
   </div>
-  <div class="btns">
-    <a class="btn primary" href="mailto:xanatos.shubunkin@gmail.com">xanatos.shubunkin@gmail.com</a>
-    <a class="btn" href="https://github.com/arm24-rs">GitHub</a>
-  </div>
+  <p class="note" id="privacy" style="margin-top:40px"><b>Privacy.</b> This site sets no cookies and uses no analytics or trackers. It is hosted on GitHub Pages, which logs visitors' IP addresses for security (<a href="https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages#data-collection" rel="noopener">GitHub</a>). Data controller for email you send: ARM24, artem@arm24.rs.</p>
 </div></section>
 </main>
 
