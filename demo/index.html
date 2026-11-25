@@ -96,7 +96,7 @@ function seed() {
   return out;
 }
 
-const state = {rows: seed(), role: "clerk", q: "", status: "", open: null, editing: false};
+const state = {rows: seed(), role: "clerk", q: "", status: "", open: null, editing: false, draft: null};
 
 function filtered(s) {
   const q = s.q.trim().toLowerCase();
@@ -128,7 +128,7 @@ function add(s, rec) {
 }
 
 function csvText(rows) {
-  const cell = v => { if (/^[=+\-@]/.test(v)) v = "'" + v; return /[";\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+  const cell = v => { if (/^[=+\-@\t\r]/.test(v)) v = "'" + v; return /[";\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
   return [FIELDS.map(f => f[1]).join(";")].concat(rows.map(r => FIELDS.map(f => cell(r[f[0]])).join(";"))).join("\r\n") + "\r\n";
 }
 
@@ -137,9 +137,9 @@ const esc = v => v.replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&g
 const opts = (list, cur) => list.map(v => `<option${v === cur ? " selected" : ""}>${esc(v)}</option>`).join("");
 
 function syncUrl() {
-  const p = new URLSearchParams();
-  if (state.open) p.set("zapis", state.open);
-  if (state.role === "admin") p.set("uloga", "admin");
+  const p = new URLSearchParams(location.search);
+  state.open ? p.set("zapis", state.open) : p.delete("zapis");
+  state.role === "admin" ? p.set("uloga", "admin") : p.delete("uloga");
   if (fromCyrl) p.set("nazad", "cyrl");
   history.replaceState(null, "", location.pathname + (p.toString() ? "?" + p : ""));
 }
@@ -158,7 +158,7 @@ function renderRec() {
   const admin = state.role === "admin";
   let html = `<h2>Zapis ${r.id}</h2>`;
   if (admin && state.editing) {
-    html += `<form id="ef" class="form"><label class="field">Naziv<input name="name" value="${esc(r.name)}" required></label>
+    html += `<form id="ef" class="form"><label class="field">Naziv<input name="name" value="${esc(r.name)}" required pattern=".*\\S.*" oninput="this.setCustomValidity('')"></label>
       <label class="field">Lokacija<select name="loc">${opts(LOCS, r.loc)}</select></label>
       <label class="field">Zadužen<select name="person">${opts(PEOPLE, r.person)}</select></label>
       <label class="field">Status<select name="status">${opts(STATUSES, r.status)}</select></label>
@@ -172,7 +172,9 @@ function renderRec() {
 }
 
 function render() { renderList(); renderRec(); syncUrl(); }
-function openRec(id) { state.open = id; state.editing = false; render(); $("rec").focus(); }
+const leaveEdit = () => !state.editing || confirm("Odustati od nesačuvanih izmena?");
+function dropDraft() { if (state.draft) { state.rows = state.rows.filter(r => r.id !== state.draft); state.draft = null; } }
+function openRec(id) { if (!leaveEdit()) return; dropDraft(); state.open = id; state.editing = false; render(); $("rec").focus(); }
 
 function init() {
   $("fs").insertAdjacentHTML("beforeend", opts(STATUSES, ""));
@@ -182,19 +184,19 @@ function init() {
   if (p.get("zapis") && state.rows.some(r => r.id === p.get("zapis"))) state.open = p.get("zapis");
   $("q").addEventListener("input", e => { state.q = e.target.value; renderList(); });
   $("fs").addEventListener("change", e => { state.status = e.target.value; renderList(); });
-  $("role").addEventListener("change", e => { state.role = e.target.value; state.editing = false; render(); });
+  $("role").addEventListener("change", e => { if (!leaveEdit()) { e.target.value = state.role; return; } dropDraft(); state.role = e.target.value; state.editing = false; render(); });
   $("rows").addEventListener("click", e => { const b = e.target.closest("button[data-id]"); if (b) openRec(b.dataset.id); });
   $("rec").addEventListener("click", e => {
-    if (e.target.id === "close") { state.open = null; render(); }
-    if (e.target.id === "edit") { state.editing = true; renderRec(); }
-    if (e.target.id === "cancel") { state.editing = false; renderRec(); }
+    if (e.target.id === "close") { const id = state.open; state.open = null; render(); const b = document.querySelector(`button[data-id="${id}"]`); (b || $("q")).focus(); }
+    if (e.target.id === "edit") { state.editing = true; renderRec(); $("rec").querySelector("input").focus(); }
+    if (e.target.id === "cancel") { state.editing = false; if (state.draft) { dropDraft(); state.open = null; render(); $("add").focus(); } else { renderRec(); $("rec").focus(); } }
   });
   $("rec").addEventListener("submit", e => {
     e.preventDefault();
-    update(state, state.open, Object.fromEntries(new FormData(e.target)));
-    state.editing = false; render();
+    if (!update(state, state.open, Object.fromEntries(new FormData(e.target)))) { e.target.querySelector("input").setCustomValidity("Unesite naziv."); e.target.reportValidity(); return; }
+    state.draft = null; state.editing = false; render(); $("rec").focus();
   });
-  $("add").addEventListener("click", () => { openRec(add(state, {name: "Novi uređaj", loc: "Magacin", person: "Administrator", status: "Na zalihama"})); state.editing = true; renderRec(); });
+  $("add").addEventListener("click", () => { if (!leaveEdit()) return; dropDraft(); state.editing = false; const id = add(state, {name: "Novi uređaj", loc: "Magacin", person: "—", status: "Na zalihama"}); state.draft = id; state.open = id; state.editing = true; render(); $("rec").querySelector("input").focus(); });
   $("csv").addEventListener("click", () => {
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob(["﻿" + csvText(filtered(state))], {type: "text/csv;charset=utf-8"}));
@@ -226,13 +228,24 @@ function selftest() {
   ok(update(s, "INV-0002", {name: "   "}) === false, "blank name rejected");
   ok(s.rows.filter(r => r.status === "U upotrebi").every(r => r.loc !== "Magacin" && r.person !== "—"), "in-use rows not in stock");
   ok(csv === 'Inventarski broj;Naziv;Lokacija;Zadužen;Status\r\nINV-1;"Monitor 24""";"A;B";Službenik 1;U upotrebi\r\n', "csv text");
+  // UI flows on the live page state
+  state.role = "admin"; render();
+  $("add").click();
+  ok(state.rows.length === 26 && state.editing && state.draft === "INV-0026", "new record opens as a draft");
+  $("cancel").click();
+  ok(state.rows.length === 25 && !state.draft && !state.open, "cancel drops the draft");
+  openRec("INV-0002"); $("edit").click();
+  const f = $("ef"), st2 = state.rows[1].status;
+  f.elements.name.value = "   "; f.elements.status.value = "Otpisano"; f.requestSubmit();
+  ok(state.rows[1].status === st2 && state.editing, "blank name keeps the form open and changes nothing");
+  state.editing = false; state.open = null; state.role = "clerk"; $("role").value = "clerk"; render();
   return "selftest ok";
 }
 
 const wantTest = new URLSearchParams(location.search).has("selftest");
-const fromCyrl = new URLSearchParams(location.search).get("nazad") === "cyrl";
+let fromCyrl = new URLSearchParams(location.search).get("nazad") === "cyrl" || /^https?:\/\/[^/]*\/sr-cyrl\//.test(document.referrer);
 init();
-if (fromCyrl || /^https?:\/\/[^/]*\/sr-cyrl\//.test(document.referrer)) { $("back").href = "/sr-cyrl/#services"; $("logo").href = "/sr-cyrl/"; }
+if (fromCyrl) { $("back").href = "/sr-cyrl/#services"; $("logo").href = "/sr-cyrl/"; }
 if (wantTest) {
   try { $("selftest").textContent = selftest(); } catch (e) { $("selftest").textContent = "selftest FAILED: " + e.message; }
 }
