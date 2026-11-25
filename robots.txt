@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://arm24.rs/sitemap.xml
