@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
 """Generate sr-cyrl/index.html (Serbian Cyrillic) from sr/index.html (Serbian Latin).
 
-Run from the repo root after every edit of sr/index.html:  python3 scripts/cyrl.py
+Run after every edit of sr/index.html:  python3 scripts/cyrl.py
 Self-check only:  python3 scripts/cyrl.py --self-check
 
 Text and the attributes alt, aria-label, content (meta) are transliterated. Kept in Latin:
 <script>/<style>, any element with translate="no" or a lang attribute, and words in KEEP
 or containing q, w, x or y (product names such as Python, WhatsApp).
 """
+import os
 import re
 import sys
 from html.parser import HTMLParser
 from html import escape
 
-SRC, OUT = "sr/index.html", "sr-cyrl/index.html"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SRC, OUT = os.path.join(ROOT, "sr/index.html"), os.path.join(ROOT, "sr-cyrl/index.html")
 
 DIGRAPHS = {"Lj": "Љ", "LJ": "Љ", "lj": "љ", "Nj": "Њ", "NJ": "Њ", "nj": "њ", "Dž": "Џ", "DŽ": "Џ", "dž": "џ"}
 SINGLE = dict(zip("abcčćdđefghijklmnoprsštuvzž", "абцчћдђефгхијклмнопрсштувзж"))
@@ -55,10 +57,9 @@ class Conv(HTMLParser):
         return any(l for _, l in self.stack)
 
     def attrs(self, tag, attrs):
-        res = []
+        res, d = [], dict(attrs)
+        meta_text = d.get("name") == "description" or d.get("property") in ("og:title", "og:description")
         for k, v in attrs:
-            d = dict(attrs)
-            meta_text = d.get("name") == "description" or d.get("property") in ("og:title", "og:description")
             if v is not None and not self.latin() and (k in ("alt", "aria-label") or k == "content" and tag == "meta" and meta_text):
                 v = translit(v)
             res.append(k if v is None else f'{k}="{escape(v, quote=True)}"')
@@ -135,10 +136,9 @@ def self_check():
 if __name__ == "__main__":
     self_check()
     if "--self-check" not in sys.argv:
-        import os
-        os.makedirs("sr-cyrl", exist_ok=True)
+        os.makedirs(os.path.dirname(OUT), exist_ok=True)
         with open(SRC, encoding="utf-8") as f:
             html = convert(f.read())
         with open(OUT, "w", encoding="utf-8") as f:
             f.write(html)
-        print(f"wrote {OUT}")
+        print(f"wrote {os.path.relpath(OUT, ROOT)}")
