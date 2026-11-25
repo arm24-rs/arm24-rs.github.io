@@ -26,7 +26,7 @@ KEEP = {"ARM24", "API", "AI", "AWS", "CI", "CD", "CPV", "SDK", "MCP", "IP", "Goo
         "backend", "Backend", "cloud", "spoofing", "Gemini", "Claude", "Senior", "Lead", "Software", "Engineer",
         "Analyst", "DinaCard", "LAT"}
 # Words where lj, nj or dž are two letters, not a digraph.
-SPLIT = {"nadž": 2, "podž": 2, "konjunk": 2, "injek": 1}  # substring: offset of the two letters
+SPLIT = {"nadž": 2, "podž": 2, "odž": 1, "predž": 3, "konjunk": 2, "injek": 1}  # substring: offset of the two letters
 WORD = re.compile(r"[A-Za-zČĆŽŠĐčćžšđ]+")
 
 
@@ -78,9 +78,9 @@ class Conv(HTMLParser):
         self.out.append(f"<{tag}{self.attrs(tag, attrs)}/>")
 
     def handle_endtag(self, tag):
-        while self.stack:
-            if self.stack.pop()[0] == tag:
-                break
+        if any(t == tag for t, _ in self.stack):  # ignore stray end tags
+            while self.stack.pop()[0] != tag:
+                pass
         self.out.append(f"</{tag}>")
 
     def handle_data(self, data):
@@ -97,6 +97,12 @@ class Conv(HTMLParser):
 
     def handle_comment(self, data):
         self.out.append(f"<!--{data}-->")
+
+    def handle_pi(self, data):
+        self.out.append(f"<?{data}>")
+
+    def unknown_decl(self, data):
+        self.out.append(f"<![{data}]>")
 
 
 SWAPS = [  # (Latin page text, Cyrillic page text): page identity, applied before conversion
@@ -123,6 +129,7 @@ def self_check():
     assert translit("Ljubljana Njegoš džep LJUBAV") == "Љубљана Његош џеп ЉУБАВ"
     assert translit("nadogradnje, Novi Sad.") == "надоградње, Нови Сад."
     assert translit("nadživeti podžanr konjunktura injekcija") == "надживети поджанр конјунктура инјекција"
+    assert translit("odžaliti predžetva") == "оджалити преджетва"
     assert translit("API-ja Python WhatsApp ARM24 360dialog artem@arm24.rs") == "API-ја Python WhatsApp ARM24 360dialog artem@arm24.rs"
     assert translit("CPV 72262000 i Google Cloud") == "CPV 72262000 и Google Cloud"
     page = convert('<!doctype html><html lang="sr-Latn"><head><meta name="viewport" content="width=device-width">'
