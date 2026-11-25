@@ -8,9 +8,9 @@
 <link rel="canonical" href="https://arm24.rs/demo/">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%234f7cff'/><text x='32' y='42' font-family='Arial' font-weight='700' font-size='24' text-anchor='middle' fill='white'>24</text></svg>">
 <style>
-:root{--bg:#ffffff;--bg2:#f5f7fb;--fg:#0f172a;--muted:#5b6475;--line:#e3e7ef;--accent:#2b5ce6;--accent2:#7c4dff;--card:#ffffff;--on-accent:#ffffff;--warn:#fff4d6;--warn-fg:#6b4e00;
+:root{--bg:#ffffff;--bg2:#f5f7fb;--fg:#0f172a;--muted:#5b6475;--line:#e3e7ef;--accent:#2b5ce6;--accent2:#7c4dff;--card:#ffffff;--on-accent:#ffffff;--warn:#fff4d6;--warn-fg:#6b4e00;--bad:#fde2e2;--bad-fg:#8a1c1c;
   --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
-@media (prefers-color-scheme:dark){:root{--bg:#0b0d12;--bg2:#11151d;--fg:#e7e9ee;--muted:#9aa3b2;--line:#222837;--accent:#6f95ff;--accent2:#a083ff;--card:#141924;--on-accent:#0b0d12;--warn:#2c2410;--warn-fg:#f2d48a}}
+@media (prefers-color-scheme:dark){:root{--bg:#0b0d12;--bg2:#11151d;--fg:#e7e9ee;--muted:#9aa3b2;--line:#222837;--accent:#6f95ff;--accent2:#a083ff;--card:#141924;--on-accent:#0b0d12;--warn:#2c2410;--warn-fg:#f2d48a;--bad:#3a1616;--bad-fg:#f4b4b4}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 var(--sans)}
 a{color:var(--accent)}
@@ -36,7 +36,7 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vert
 th{font-size:14px;color:var(--muted);background:var(--bg2)}
 tr:last-child td{border-bottom:0}
 td button{padding:0;border:0;background:none;color:var(--accent);text-decoration:underline;font-weight:600}
-.st.s1{background:#fff4d6;color:#6b4e00}.st.s3{background:#fde2e2;color:#8a1c1c}
+.st.s1{background:var(--warn);color:var(--warn-fg)}.st.s3{background:var(--bad);color:var(--bad-fg)}
 .st{display:inline-block;font-size:13px;border-radius:999px;padding:1px 10px;border:1px solid var(--line);background:var(--bg2);white-space:nowrap}
 .count{color:var(--muted);font-size:14px;margin:8px 0 40px}
 .panel{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:20px;margin:0 0 40px}
@@ -53,7 +53,7 @@ footer{padding:24px 0;color:var(--muted);font-size:14px;border-top:1px solid var
 </style>
 </head>
 <body>
-<header><div class="wrap"><a class="logo" href="/sr/" translate="no">ARM<span>24</span></a><a id="back" href="/sr/#services">Nazad na sajt</a></div></header>
+<header><div class="wrap"><a class="logo" id="logo" href="/sr/" translate="no">ARM<span>24</span></a><a id="back" href="/sr/#services">Nazad na sajt</a></div></header>
 <div class="banner" role="note"><div class="wrap"><p>Primer napravljen za ovaj sajt, sa izmišljenim podacima. Nije gotov proizvod niti posao rađen za klijenta; ovakva aplikacija se pravi po meri. Podaci se ne čuvaju.</p></div></div>
 <main class="wrap">
   <h1>Evidencija opreme</h1>
@@ -85,12 +85,12 @@ const stamp = t => day(t.getDate(), t.getMonth() + 1, t.getFullYear()) + " " + S
 function seed() {
   const out = [];
   for (let i = 0; i < 25; i++) {
-    const r = {id: "INV-" + String(i + 1).padStart(4, "0"), name: NAMES[i % NAMES.length], loc: LOCS[(i * 3) % LOCS.length],
+    const r = {id: "INV-" + String(i + 1).padStart(4, "0"), name: NAMES[i % NAMES.length], loc: LOCS[(i * 3) % (LOCS.length - 2)],
       person: PEOPLE[i % 5], status: STATUSES[i % 7 === 3 ? 1 : i % 11 === 5 ? 3 : i % 6 === 4 ? 2 : 0], hist: []};
-    r.hist.push({when: day(1 + (i * 5) % 27, 1 + i % 12, 2025), who: "Administrator", what: "Zapis unet"});
+    r.hist.push({when: day(1 + (i * 5) % 27, 1 + i % 12, 2025) + " 09:" + String(10 + i).padStart(2, "0"), who: "Administrator", what: "Zapis unet"});
     if (r.status === "Na zalihama" || r.status === "Otpisano") { r.loc = "Magacin"; r.person = "—"; }
-    if (i % 3 === 0 && r.loc !== "Magacin") r.hist.push({when: day(1 + (i * 7) % 27, 1 + (i + 4) % 12, 2026), who: "Administrator", what: "Lokacija: Magacin → " + r.loc});
-    if (r.status === "Na servisu") r.hist.push({when: day(3 + i % 20, 10, 2026), who: "Administrator", what: "Status: U upotrebi → Na servisu"});
+    if (i % 3 === 0 && r.loc !== "Magacin") r.hist.push({when: day(1 + (i * 7) % 27, 1 + (i + 4) % 12, 2026) + " 11:" + String(20 + i).padStart(2, "0"), who: "Administrator", what: "Lokacija: Magacin → " + r.loc});
+    if (r.status === "Na servisu") r.hist.push({when: day(3 + i % 20, 10, 2026) + " 13:05", who: "Administrator", what: "Status: U upotrebi → Na servisu"});
     out.push(r);
   }
   return out;
@@ -106,6 +106,7 @@ function filtered(s) {
 
 function update(s, id, changes, who) {
   if (s.role !== "admin") return false;
+  if ("name" in changes && !(changes.name = changes.name.trim())) return false;
   const r = s.rows.find(x => x.id === id);
   if (!r) return false;
   const when = stamp(new Date());
@@ -121,14 +122,13 @@ function update(s, id, changes, who) {
 function add(s, rec) {
   if (s.role !== "admin") return null;
   const id = "INV-" + String(s.rows.length + 1).padStart(4, "0");
-  const now = new Date();
   s.rows.push({id, name: rec.name, loc: rec.loc, person: rec.person, status: rec.status,
     hist: [{when: stamp(new Date()), who: "Administrator", what: "Zapis unet"}]});
   return id;
 }
 
 function csvText(rows) {
-  const cell = v => /[";\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+  const cell = v => { if (/^[=+\-@]/.test(v)) v = "'" + v; return /[";\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
   return [FIELDS.map(f => f[1]).join(";")].concat(rows.map(r => FIELDS.map(f => cell(r[f[0]])).join(";"))).join("\r\n") + "\r\n";
 }
 
@@ -140,6 +140,7 @@ function syncUrl() {
   const p = new URLSearchParams();
   if (state.open) p.set("zapis", state.open);
   if (state.role === "admin") p.set("uloga", "admin");
+  if (fromCyrl) p.set("nazad", "cyrl");
   history.replaceState(null, "", location.pathname + (p.toString() ? "?" + p : ""));
 }
 
@@ -197,7 +198,7 @@ function init() {
   $("csv").addEventListener("click", () => {
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob(["﻿" + csvText(filtered(state))], {type: "text/csv;charset=utf-8"}));
-    a.download = "evidencija-opreme.csv"; a.click(); URL.revokeObjectURL(a.href);
+    a.download = "evidencija-opreme.csv"; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   });
   render();
 }
@@ -221,6 +222,9 @@ function selftest() {
   ok(s.rows[0].hist[before].what === "Status: " + st + " → Otpisano", "history text");
   ok(add(s, {name: "Novi", loc: "Magacin", person: "Administrator", status: "Na zalihama"}) === "INV-0026", "admin adds");
   const csv = csvText([{id: "INV-1", name: 'Monitor 24"', loc: "A;B", person: "Službenik 1", status: "U upotrebi"}]);
+  ok(csvText([{id: "1", name: "=SUM(A1)", loc: "a", person: "b", status: "c"}]).includes(";'=SUM(A1);"), "csv formula neutralised");
+  ok(update(s, "INV-0002", {name: "   "}) === false, "blank name rejected");
+  ok(s.rows.filter(r => r.status === "U upotrebi").every(r => r.loc !== "Magacin" && r.person !== "—"), "in-use rows not in stock");
   ok(csv === 'Inventarski broj;Naziv;Lokacija;Zadužen;Status\r\nINV-1;"Monitor 24""";"A;B";Službenik 1;U upotrebi\r\n', "csv text");
   return "selftest ok";
 }
@@ -228,7 +232,7 @@ function selftest() {
 const wantTest = new URLSearchParams(location.search).has("selftest");
 const fromCyrl = new URLSearchParams(location.search).get("nazad") === "cyrl";
 init();
-if (fromCyrl || /^https?:\/\/[^/]*\/sr-cyrl\//.test(document.referrer)) $("back").href = "/sr-cyrl/#services";
+if (fromCyrl || /^https?:\/\/[^/]*\/sr-cyrl\//.test(document.referrer)) { $("back").href = "/sr-cyrl/#services"; $("logo").href = "/sr-cyrl/"; }
 if (wantTest) {
   try { $("selftest").textContent = selftest(); } catch (e) { $("selftest").textContent = "selftest FAILED: " + e.message; }
 }
