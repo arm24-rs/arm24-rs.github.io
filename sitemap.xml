@@ -21,4 +21,7 @@
     <xhtml:link rel="alternate" hreflang="sr-Cyrl" href="https://arm24.rs/sr-cyrl/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://arm24.rs/"/>
   </url>
+  <url>
+    <loc>https://arm24.rs/demo/</loc>
+  </url>
 </urlset>

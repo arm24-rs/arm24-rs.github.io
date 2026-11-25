@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="sr-Latn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Evidencija opreme — primer aplikacije, ARM24</title>
+<meta name="description" content="Primer veb aplikacije za evidenciju opreme, sa izmišljenim podacima: pretraga, korisničke uloge, istorija izmena i izvoz u CSV.">
+<link rel="canonical" href="https://arm24.rs/demo/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%234f7cff'/><text x='32' y='42' font-family='Arial' font-weight='700' font-size='24' text-anchor='middle' fill='white'>24</text></svg>">
+<style>
+:root{--bg:#ffffff;--bg2:#f5f7fb;--fg:#0f172a;--muted:#5b6475;--line:#e3e7ef;--accent:#2b5ce6;--accent2:#7c4dff;--card:#ffffff;--on-accent:#ffffff;--warn:#fff4d6;--warn-fg:#6b4e00;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#0b0d12;--bg2:#11151d;--fg:#e7e9ee;--muted:#9aa3b2;--line:#222837;--accent:#6f95ff;--accent2:#a083ff;--card:#141924;--on-accent:#0b0d12;--warn:#2c2410;--warn-fg:#f2d48a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 var(--sans)}
+a{color:var(--accent)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:60px;flex-wrap:wrap}
+.logo{font-weight:700;font-size:20px;color:var(--fg);text-decoration:none}
+.logo span{color:var(--accent)}
+.banner{background:var(--warn);color:var(--warn-fg);border-bottom:1px solid var(--line);font-size:15px}
+.banner p{margin:0;padding:12px 0}
+h1{font-size:clamp(26px,4vw,34px);letter-spacing:-.02em;margin:28px 0 6px}
+.sub{color:var(--muted);margin:0 0 20px}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin:0 0 16px}
+.field{display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--muted)}
+input,select{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+input[type=search]{width:240px;max-width:100%}
+button{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;padding:8px 14px;cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--accent2);outline-offset:2px}
+.spacer{flex:1}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:14px;color:var(--muted);background:var(--bg2)}
+tr:last-child td{border-bottom:0}
+td button{padding:0;border:0;background:none;color:var(--accent);text-decoration:underline;font-weight:600}
+.st{display:inline-block;font-size:13px;border-radius:999px;padding:1px 10px;border:1px solid var(--line);background:var(--bg2);white-space:nowrap}
+.count{color:var(--muted);font-size:14px;margin:8px 0 40px}
+.panel{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:20px;margin:0 0 40px}
+.panel h2{margin:0 0 12px;font-size:22px}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;margin:0 0 16px}
+dt{color:var(--muted)}dd{margin:0;font-weight:500}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:0 0 16px}
+.hist{list-style:none;padding:0;margin:0}
+.hist li{border-left:3px solid var(--accent);padding:4px 0 4px 12px;margin:0 0 8px;background:var(--card);border-radius:0 8px 8px 0}
+.hist small{color:var(--muted);display:block}
+.msg{color:var(--muted)}
+footer{padding:24px 0;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
+@media (max-width:700px){thead{display:none}table,tbody,tr,td{display:block}tr{border-bottom:1px solid var(--line);padding:8px 0}td{border:0;padding:4px 12px}td::before{content:attr(data-l) ": ";color:var(--muted)}dl{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="logo" href="/sr/" translate="no">ARM<span>24</span></a><a href="/sr/#services">Nazad na sajt</a></div></header>
+<div class="banner" role="note"><div class="wrap"><p>Primer napravljen za ovaj sajt, sa izmišljenim podacima. Nije gotov proizvod niti posao rađen za klijenta; ovakva aplikacija se pravi po meri. Podaci se ne čuvaju.</p></div></div>
+<main class="wrap">
+  <h1>Evidencija opreme</h1>
+  <p class="sub">Primer evidencije sa pretragom, korisničkim ulogama, istorijom izmena i izvozom u CSV.</p>
+  <div class="bar">
+    <label class="field">Pretraga<input type="search" id="q" placeholder="broj, naziv, lokacija…"></label>
+    <label class="field">Status<select id="fs"><option value="">Svi statusi</option></select></label>
+    <label class="field">Uloga<select id="role"><option value="clerk">Službenik</option><option value="admin">Administrator</option></select></label>
+    <span class="spacer"></span>
+    <button id="add" class="primary" type="button">Novi zapis</button>
+    <button id="csv" type="button">Izvoz u CSV</button>
+  </div>
+  <div id="rec" class="panel" hidden tabindex="-1"></div>
+  <table><thead><tr><th scope="col">Inventarski broj</th><th scope="col">Naziv</th><th scope="col">Lokacija</th><th scope="col">Zadužen</th><th scope="col">Status</th></tr></thead><tbody id="rows"></tbody></table>
+  <p class="count" id="count" aria-live="polite"></p>
+  <p id="selftest" class="msg"></p>
+</main>
+<footer><div class="wrap">ARM24, Novi Sad · <a href="/sr/#ponuda">Zatražite ponudu za aplikaciju po meri</a></div></footer>
+<script>
+"use strict";
+const STATUSES = ["U upotrebi", "Na servisu", "Na zalihama", "Otpisano"];
+const LOCS = ["Kancelarija 12", "Kancelarija 14", "Kancelarija 21", "Sala za sastanke", "Prijemna kancelarija", "Magacin", "Arhiva"];
+const PEOPLE = ["Službenik 1", "Službenik 2", "Službenik 3", "Službenik 4", "Službenik 5", "Administrator"];
+const NAMES = ["Laptop 14\"", "Stoni računar", "Monitor 24\"", "Laserski štampač", "Skener dokumenata", "Projektor", "IP telefon", "Mrežni ruter", "Server za arhivu", "UPS uređaj", "Tablet", "Fotokopir aparat", "Eksterni disk 2 TB", "Mrežni svič 24 porta", "Čitač bar-koda"];
+const FIELDS = [["id", "Inventarski broj"], ["name", "Naziv"], ["loc", "Lokacija"], ["person", "Zadužen"], ["status", "Status"]];
+const day = (d, m, y) => String(d).padStart(2, "0") + "." + String(m).padStart(2, "0") + "." + y + ".";
+
+function seed() {
+  const out = [];
+  for (let i = 0; i < 25; i++) {
+    const r = {id: "INV-" + String(i + 1).padStart(4, "0"), name: NAMES[i % NAMES.length], loc: LOCS[(i * 3) % LOCS.length],
+      person: PEOPLE[i % 5], status: STATUSES[i % 7 === 3 ? 1 : i % 11 === 5 ? 3 : i % 6 === 4 ? 2 : 0], hist: []};
+    r.hist.push({when: day(1 + (i * 5) % 27, 1 + i % 12, 2025), who: "Administrator", what: "Zapis kreiran"});
+    if (i % 3 === 0) r.hist.push({when: day(1 + (i * 7) % 27, 1 + (i + 4) % 12, 2026), who: "Administrator", what: "Lokacija: Magacin → " + r.loc});
+    if (r.status === "Na servisu") r.hist.push({when: day(3 + i % 20, 10, 2026), who: "Administrator", what: "Status: U upotrebi → Na servisu"});
+    out.push(r);
+  }
+  return out;
+}
+
+const state = {rows: seed(), role: "clerk", q: "", status: "", open: null, editing: false};
+
+function filtered(s) {
+  const q = s.q.trim().toLowerCase();
+  return s.rows.filter(r => (!s.status || r.status === s.status) &&
+    (!q || [r.id, r.name, r.loc, r.person, r.status].some(v => v.toLowerCase().includes(q))));
+}
+
+function update(s, id, changes, who) {
+  if (s.role !== "admin") return false;
+  const r = s.rows.find(x => x.id === id);
+  if (!r) return false;
+  const now = new Date(), when = day(now.getDate(), now.getMonth() + 1, now.getFullYear());
+  for (const [k, label] of FIELDS) {
+    if (k in changes && changes[k] !== r[k]) {
+      r.hist.push({when, who: who || "Administrator", what: label + ": " + r[k] + " → " + changes[k]});
+      r[k] = changes[k];
+    }
+  }
+  return true;
+}
+
+function add(s, rec) {
+  if (s.role !== "admin") return null;
+  const id = "INV-" + String(s.rows.length + 1).padStart(4, "0");
+  const now = new Date();
+  s.rows.push({id, name: rec.name, loc: rec.loc, person: rec.person, status: rec.status,
+    hist: [{when: day(now.getDate(), now.getMonth() + 1, now.getFullYear()), who: "Administrator", what: "Zapis kreiran"}]});
+  return id;
+}
+
+function csvText(rows) {
+  const cell = v => /[";\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+  return [FIELDS.map(f => f[1]).join(";")].concat(rows.map(r => FIELDS.map(f => cell(r[f[0]])).join(";"))).join("\r\n") + "\r\n";
+}
+
+const $ = id => document.getElementById(id);
+const esc = v => v.replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const opts = (list, cur) => list.map(v => `<option${v === cur ? " selected" : ""}>${esc(v)}</option>`).join("");
+
+function syncUrl() {
+  const p = new URLSearchParams();
+  if (state.open) p.set("zapis", state.open);
+  if (state.role === "admin") p.set("uloga", "admin");
+  history.replaceState(null, "", location.pathname + (p.toString() ? "?" + p : ""));
+}
+
+function renderList() {
+  const rows = filtered(state);
+  $("rows").innerHTML = rows.map(r => `<tr><td data-l="Inventarski broj"><button type="button" data-id="${r.id}">${r.id}</button></td><td data-l="Naziv">${esc(r.name)}</td><td data-l="Lokacija">${esc(r.loc)}</td><td data-l="Zadužen">${esc(r.person)}</td><td data-l="Status"><span class="st">${esc(r.status)}</span></td></tr>`).join("");
+  $("count").textContent = `Prikazano ${rows.length} od ${state.rows.length} zapisa.`;
+  $("add").hidden = state.role !== "admin";
+}
+
+function renderRec() {
+  const box = $("rec"), r = state.rows.find(x => x.id === state.open);
+  if (!r) { box.hidden = true; box.innerHTML = ""; return; }
+  box.hidden = false;
+  const admin = state.role === "admin";
+  let html = `<h2>${r.id}: ${esc(r.name)}</h2>`;
+  if (admin && state.editing) {
+    html += `<form id="ef" class="form"><label class="field">Naziv<input name="name" value="${esc(r.name)}" required></label>
+      <label class="field">Lokacija<select name="loc">${opts(LOCS, r.loc)}</select></label>
+      <label class="field">Zadužen<select name="person">${opts(PEOPLE, r.person)}</select></label>
+      <label class="field">Status<select name="status">${opts(STATUSES, r.status)}</select></label>
+      <div class="bar"><button class="primary" type="submit">Sačuvaj</button><button type="button" id="cancel">Odustani</button></div></form>`;
+  } else {
+    html += `<dl>${FIELDS.slice(1).map(([k, l]) => `<dt>${l}</dt><dd>${esc(r[k])}</dd>`).join("")}</dl><div class="bar">${admin ? '<button type="button" id="edit" class="primary">Izmeni</button>' : ""}<button type="button" id="close">Zatvori</button></div>`;
+  }
+  html += admin ? `<h3>Istorija izmena</h3><ul class="hist">${r.hist.slice().reverse().map(h => `<li>${esc(h.what)}<small>${h.when} · ${esc(h.who)}</small></li>`).join("")}</ul>`
+    : `<p class="msg">Izmene i istoriju izmena vidi administrator.</p>`;
+  box.innerHTML = html;
+}
+
+function render() { renderList(); renderRec(); syncUrl(); }
+function openRec(id) { state.open = id; state.editing = false; render(); $("rec").focus(); }
+
+function init() {
+  $("fs").insertAdjacentHTML("beforeend", opts(STATUSES, ""));
+  const p = new URLSearchParams(location.search);
+  if (p.get("uloga") === "admin") state.role = "admin";
+  $("role").value = state.role;
+  if (p.get("zapis") && state.rows.some(r => r.id === p.get("zapis"))) state.open = p.get("zapis");
+  $("q").addEventListener("input", e => { state.q = e.target.value; renderList(); });
+  $("fs").addEventListener("change", e => { state.status = e.target.value; renderList(); });
+  $("role").addEventListener("change", e => { state.role = e.target.value; state.editing = false; render(); });
+  $("rows").addEventListener("click", e => { const b = e.target.closest("button[data-id]"); if (b) openRec(b.dataset.id); });
+  $("rec").addEventListener("click", e => {
+    if (e.target.id === "close") { state.open = null; render(); }
+    if (e.target.id === "edit") { state.editing = true; renderRec(); }
+    if (e.target.id === "cancel") { state.editing = false; renderRec(); }
+  });
+  $("rec").addEventListener("submit", e => {
+    e.preventDefault();
+    update(state, state.open, Object.fromEntries(new FormData(e.target)));
+    state.editing = false; render();
+  });
+  $("add").addEventListener("click", () => { openRec(add(state, {name: "Novi uređaj", loc: "Magacin", person: "Administrator", status: "Na zalihama"})); state.editing = true; renderRec(); });
+  $("csv").addEventListener("click", () => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob(["﻿" + csvText(filtered(state))], {type: "text/csv;charset=utf-8"}));
+    a.download = "evidencija-opreme.csv"; a.click(); URL.revokeObjectURL(a.href);
+  });
+  render();
+}
+
+function selftest() {
+  const ok = (c, m) => { if (!c) throw new Error(m); };
+  const s = {rows: seed(), role: "clerk", q: "", status: ""};
+  ok(s.rows.length === 25, "25 rows");
+  ok(s.rows.every(r => r.hist.length >= 1), "history per row");
+  s.q = "laptop"; const f1 = filtered(s);
+  ok(f1.length > 0 && f1.every(r => r.name.toLowerCase().includes("laptop")), "search");
+  s.q = ""; s.status = "Na servisu"; const f2 = filtered(s);
+  ok(f2.length > 0 && f2.every(r => r.status === "Na servisu"), "status filter");
+  s.status = "";
+  const before = s.rows[0].hist.length, st = s.rows[0].status;
+  ok(update(s, "INV-0001", {status: "Otpisano"}) === false && s.rows[0].status === st, "clerk cannot edit");
+  ok(add(s, {name: "X", loc: "Magacin", person: "Administrator", status: "Na zalihama"}) === null, "clerk cannot add");
+  s.role = "admin";
+  ok(update(s, "INV-0001", {status: "Otpisano", loc: s.rows[0].loc}) === true, "admin edits");
+  ok(s.rows[0].status === "Otpisano" && s.rows[0].hist.length === before + 1, "one history entry per changed field");
+  ok(s.rows[0].hist[before].what === "Status: " + st + " → Otpisano", "history text");
+  ok(add(s, {name: "Novi", loc: "Magacin", person: "Administrator", status: "Na zalihama"}) === "INV-0026", "admin adds");
+  const csv = csvText([{id: "INV-1", name: 'Monitor 24"', loc: "A;B", person: "Službenik 1", status: "U upotrebi"}]);
+  ok(csv === 'Inventarski broj;Naziv;Lokacija;Zadužen;Status\r\nINV-1;"Monitor 24""";"A;B";Službenik 1;U upotrebi\r\n', "csv text");
+  return "selftest ok";
+}
+
+const wantTest = new URLSearchParams(location.search).has("selftest");
+init();
+if (wantTest) {
+  try { $("selftest").textContent = selftest(); } catch (e) { $("selftest").textContent = "selftest FAILED: " + e.message; }
+}
+</script>
+</body>
+</html>
