@@ -76,10 +76,11 @@ footer{padding:24px 0;color:var(--muted);font-size:14px;border-top:1px solid var
 "use strict";
 const STATUSES = ["U upotrebi", "Na servisu", "Na zalihama", "Otpisano"];
 const LOCS = ["Kancelarija 12", "Kancelarija 14", "Kancelarija 21", "Sala za sastanke", "Prijemna kancelarija", "Magacin", "Arhiva"];
-const PEOPLE = ["Službenik 1", "Službenik 2", "Službenik 3", "Službenik 4", "Službenik 5", "Administrator"];
+const PEOPLE = ["Službenik 1", "Službenik 2", "Službenik 3", "Službenik 4", "Službenik 5", "Administrator", "—"];
 const NAMES = ["Laptop 14\"", "Stoni računar", "Monitor 24\"", "Laserski štampač", "Skener dokumenata", "Projektor", "IP telefon", "Mrežni ruter", "Server za arhivu", "UPS uređaj", "Tablet", "Fotokopir aparat", "Eksterni disk 2 TB", "Mrežni svič 24 porta", "Čitač bar-koda"];
 const FIELDS = [["id", "Inventarski broj"], ["name", "Naziv"], ["loc", "Lokacija"], ["person", "Zadužen"], ["status", "Status"]];
 const day = (d, m, y) => String(d).padStart(2, "0") + "." + String(m).padStart(2, "0") + "." + y + ".";
+const stamp = t => day(t.getDate(), t.getMonth() + 1, t.getFullYear()) + " " + String(t.getHours()).padStart(2, "0") + ":" + String(t.getMinutes()).padStart(2, "0");
 
 function seed() {
   const out = [];
@@ -87,7 +88,8 @@ function seed() {
     const r = {id: "INV-" + String(i + 1).padStart(4, "0"), name: NAMES[i % NAMES.length], loc: LOCS[(i * 3) % LOCS.length],
       person: PEOPLE[i % 5], status: STATUSES[i % 7 === 3 ? 1 : i % 11 === 5 ? 3 : i % 6 === 4 ? 2 : 0], hist: []};
     r.hist.push({when: day(1 + (i * 5) % 27, 1 + i % 12, 2025), who: "Administrator", what: "Zapis unet"});
-    if (i % 3 === 0) r.hist.push({when: day(1 + (i * 7) % 27, 1 + (i + 4) % 12, 2026), who: "Administrator", what: "Lokacija: Magacin → " + r.loc});
+    if (r.status === "Na zalihama" || r.status === "Otpisano") { r.loc = "Magacin"; r.person = "—"; }
+    if (i % 3 === 0 && r.loc !== "Magacin") r.hist.push({when: day(1 + (i * 7) % 27, 1 + (i + 4) % 12, 2026), who: "Administrator", what: "Lokacija: Magacin → " + r.loc});
     if (r.status === "Na servisu") r.hist.push({when: day(3 + i % 20, 10, 2026), who: "Administrator", what: "Status: U upotrebi → Na servisu"});
     out.push(r);
   }
@@ -106,7 +108,7 @@ function update(s, id, changes, who) {
   if (s.role !== "admin") return false;
   const r = s.rows.find(x => x.id === id);
   if (!r) return false;
-  const now = new Date(), when = day(now.getDate(), now.getMonth() + 1, now.getFullYear());
+  const when = stamp(new Date());
   for (const [k, label] of FIELDS) {
     if (k in changes && changes[k] !== r[k]) {
       r.hist.push({when, who: who || "Administrator", what: label + ": " + r[k] + " → " + changes[k]});
@@ -121,7 +123,7 @@ function add(s, rec) {
   const id = "INV-" + String(s.rows.length + 1).padStart(4, "0");
   const now = new Date();
   s.rows.push({id, name: rec.name, loc: rec.loc, person: rec.person, status: rec.status,
-    hist: [{when: day(now.getDate(), now.getMonth() + 1, now.getFullYear()), who: "Administrator", what: "Zapis unet"}]});
+    hist: [{when: stamp(new Date()), who: "Administrator", what: "Zapis unet"}]});
   return id;
 }
 
@@ -164,7 +166,7 @@ function renderRec() {
     html += `<dl>${FIELDS.slice(1).map(([k, l]) => `<dt>${l}</dt><dd>${esc(r[k])}</dd>`).join("")}</dl><div class="bar">${admin ? '<button type="button" id="edit" class="primary">Izmeni</button>' : ""}<button type="button" id="close">Zatvori</button></div>`;
   }
   html += admin ? `<h3>Istorija izmena</h3><ul class="hist">${r.hist.slice().reverse().map(h => `<li>${esc(h.what)}<small>${h.when} · ${esc(h.who)}</small></li>`).join("")}</ul>`
-    : `<p class="msg">Izmene i istoriju izmena vidi administrator.</p>`;
+    : `<p class="msg">Izmene unosi administrator, koji vidi i istoriju izmena.</p>`;
   box.innerHTML = html;
 }
 
