@@ -91,12 +91,12 @@ tr:last-child td{border-bottom:0}
 td:first-child{color:var(--muted);width:34%;white-space:nowrap}
 td:last-child{font-weight:500;font-variant-numeric:tabular-nums}
 .founder{display:grid;grid-template-columns:220px 1fr;gap:40px;align-items:start}
-.avatar{width:220px;height:220px;border-radius:24px;background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;color:var(--fg);font:700 64px var(--sans);letter-spacing:-.04em}
+.avatar{display:block;width:220px;height:220px;border-radius:16px;border:1px solid var(--line);object-fit:cover}
 h3.exp{font-size:22px;margin:36px 0 0}
 .contact{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
 .note{color:var(--muted);font-size:14px;max-width:760px;margin:0}
 footer{padding:28px 0;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
-@media (max-width:760px){header{position:static}nav{flex-wrap:wrap;padding:10px 0}nav ul{gap:4px 16px}.lang{border:0;padding:0}.hero .wrap,.founder{grid-template-columns:1fr}.avatar{width:120px;height:120px;font-size:40px}td:first-child{white-space:normal}.hero{padding:56px 0}}
+@media (max-width:760px){header{position:static}nav{flex-wrap:wrap;padding:10px 0}nav ul{gap:4px 16px}.lang{border:0;padding:0}.hero .wrap,.founder{grid-template-columns:1fr}.avatar{width:120px;height:120px}td:first-child{white-space:normal}.hero{padding:56px 0}}
 </style>
 </head>
 <body>
@@ -157,7 +157,7 @@ footer{padding:28px 0;color:var(--muted);font-size:14px;border-top:1px solid var
 </div></section>
 
 <section id="founder" class="alt"><div class="wrap founder">
-  <div class="avatar" aria-hidden="true">AM</div>
+  <img class="avatar" src="/photo.jpg" width="220" height="220" alt="Artem Mashkovskii">
   <div>
     <h2>Artem Mashkovskii</h2>
     <p class="sub" style="margin-bottom:0">Owner of ARM24. Backend engineer since 2017; before that, two years as a data analyst. MSc in Applied Mathematics and Informatics, Saint Petersburg State University. Based in Novi Sad, Serbia, since 2022.</p>
