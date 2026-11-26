@@ -111,6 +111,8 @@ def swaps(page):
     lat, cyr = "/sr/" + page, "/sr-cyrl/" + page
     return [
         ('<html lang="sr-Latn">', '<html lang="sr-Cyrl">'),
+        # Cyrillic text must not paint in a fallback font and shift when Onest arrives (CLS)
+        ('<link rel="preload" href="/fonts/onest-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>', '<link rel="preload" href="/fonts/onest-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>\n<link rel="preload" href="/fonts/onest-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>'),
         (f'<link rel="canonical" href="https://arm24.rs{lat}">', f'<link rel="canonical" href="https://arm24.rs{cyr}">'),
         (f'<meta property="og:url" content="https://arm24.rs{lat}">', f'<meta property="og:url" content="https://arm24.rs{cyr}">'),
         (f'<a href="{lat}" aria-current="page" lang="sr-Latn">Srpski</a> · <a href="{cyr}" lang="sr-Cyrl" hreflang="sr-Cyrl">Српски</a>',
@@ -141,6 +143,7 @@ def self_check():
     assert translit("API-ja Python WhatsApp ARM24 360dialog artem@arm24.rs") == "API-ја Python WhatsApp ARM24 360dialog artem@arm24.rs"
     assert translit("CPV 72262000 i Google Cloud") == "CPV 72262000 и Google Cloud"
     page = convert('<!doctype html><html lang="sr-Latn"><head><meta name="viewport" content="width=device-width">'
+                   '<link rel="preload" href="/fonts/onest-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>'
                    '<link rel="canonical" href="https://arm24.rs/sr/">'
                    '<meta property="og:url" content="https://arm24.rs/sr/"><meta name="description" content="Softver po meri">'
                    '<style>a{color:red}</style></head><body><a class="logo" href="/sr/" translate="no">ARM<span>24</span></a>'
@@ -152,9 +155,10 @@ def self_check():
                  '<td translate="no">ARTEM PR</td>', 'alt="Слика"', '<a class="logo" href="/sr-cyrl/" translate="no">ARM<span>24</span>',
                  'href="https://arm24.rs/sr-cyrl/"', '<a href="/sr/" lang="sr-Latn" hreflang="sr-Latn">Srpski</a>',
                  'aria-current="page" lang="sr-Cyrl">Српски</a>', 'href="/demo/?nazad=cyrl"', 'href="/demo/povezivanje/?nazad=cyrl"', 'location.replace("/sr-cyrl/javni-narucioci/"+location.search+"#ponuda")',
-                 '<a href="/sr-cyrl/javni-narucioci/">За јавне наручиоце</a>'):
+                 '<a href="/sr-cyrl/javni-narucioci/">За јавне наручиоце</a>', 'href="/fonts/onest-cyrillic-wght-normal.woff2"'):
         assert want in page, want
     page = convert('<html lang="sr-Latn"><link rel="canonical" href="https://arm24.rs/sr/javni-narucioci/">'
+                   '<link rel="preload" href="/fonts/onest-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>'
                    '<meta property="og:url" content="https://arm24.rs/sr/javni-narucioci/">'
                    '<link rel="alternate" hreflang="sr-Latn" href="https://arm24.rs/sr/javni-narucioci/">'
                    '<a class="logo" href="/sr/" translate="no">ARM<span>24</span></a><a href="/sr/#services">usluge</a>'
