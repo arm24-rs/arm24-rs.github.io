@@ -122,12 +122,13 @@ function transfer(text, done) {
     const why = c.length !== 6 ? "Red nema 6 polja" : !doc ? "Nema broja dokumenta"
       : seen.has(doc) ? "Dokument je već prenet" : !isoDate(c[1]) ? "Datum ne postoji: " + c[1]
       : !own(CUST, c[2]) ? "Kupac " + c[2] + " nema šifru u programu B" : !own(ART, c[3]) ? "Artikal " + c[3] + " nema šifru u programu B"
-      : !(num(c[4]) > 0) ? "Količina mora biti veća od nule" : !(num(c[5]) >= 0) ? "Cena nije broj: " + c[5]
-      : num(c[4]) > MAX || num(c[5]) > MAX || num(c[4]) * num(c[5]) > MAX ? "Iznos je veći od " + MAX.toLocaleString("sr-RS") : "";
-    if (why) { bad.push({line, doc, why}); return; }
+      : !(num(c[4]) > 0) ? "Količina mora biti veća od nule" : !(num(c[5]) >= 0) ? "Cena nije broj: " + c[5] : "";
+    const qty = num(c[4]), price = Math.round(num(c[5]) * 100) / 100, amount = Math.round(qty * price * 100) / 100, max = MAX.toLocaleString("sr-RS");
+    const why2 = why || (Math.round(qty * 1000) / 1000 !== qty ? "Količina ima više od tri decimale" : qty > MAX ? "Količina je veća od " + max
+      : price > MAX ? "Cena je veća od " + max : amount > MAX ? "Iznos je veći od " + max : "");
+    if (why2) { bad.push({line, doc, why: why2}); return; }
     seen.add(doc);
-    const qty = num(c[4]), price = Math.round(num(c[5]) * 100) / 100;
-    good.push({doc, date: isoDate(c[1]), cust: CUST[c[2]], art: ART[c[3]], qty, price, amount: Math.round(qty * price * 100) / 100});
+    good.push({doc, date: isoDate(c[1]), cust: CUST[c[2]], art: ART[c[3]], qty, price, amount});
   });
   return {good, bad};
 }
@@ -158,6 +159,7 @@ function init() {
   $("reset").addEventListener("click", () => { $("src").value = SAMPLE; run(); });
   $("dl").addEventListener("click", () => {
     run();
+    if (!last.good.length) return;
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([importFile(last.good)], {type: "text/csv;charset=utf-8"}));
     a.download = "uvoz-program-b.csv"; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
@@ -184,7 +186,8 @@ function selftest() {
   ok(importFile(transfer(HEAD.join(";") + '\nX,4;01.01.2026;K-017;A-100;1;1', []).good).split("\n")[1].startsWith('"X,4",'), "comma quoted");
   const t = transfer(HEAD.join(";") + "\nP1;01.01.2026;K-017;A-100;3;1,006", []).good[0];
   ok(t.price === 1.01 && t.amount === 3.03, "amount from the written price");
-  ok(transfer(HEAD.join(";") + "\nP1;01.01.2026;K-017;A-100;1;999999999999999999999", []).bad[0].why.startsWith("Iznos"), "huge numbers rejected");
+  const lim = s => transfer(HEAD.join(";") + "\nP1;01.01.2026;K-017;A-100;" + s, []).bad.map(b => b.why.split(" ")[0]).join();
+  ok(lim("1;999999999999999999999") === "Cena" && lim("2000000000;0") === "Količina" && lim("600000000;1,665") === "Iznos" && lim("0,0000001;1") === "Količina", "limits");
   ok(transfer(HEAD.join(";") + "\nY-1;01.01.2026;K-017;A-100;1", []).bad[0].why === "Red nema 6 polja", "field count");
   ok(backKey("cyrl") === "cyrl" && backKey("toString") === "" && backKey(null) === "", "nazad keys");
   return "selftest ok";
