@@ -6,19 +6,25 @@
 <title>Evidencija opreme — primer aplikacije, ARM24</title>
 <meta name="description" content="Primer veb aplikacije za evidenciju opreme, sa izmišljenim podacima: pretraga, korisničke uloge, istorija izmena i izvoz u CSV.">
 <link rel="canonical" href="https://arm24.rs/demo/">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%234f7cff'/><text x='32' y='42' font-family='Arial' font-weight='700' font-size='24' text-anchor='middle' fill='white'>24</text></svg>">
+<link rel="preload" href="/fonts/onest-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <style>
-:root{--bg:#ffffff;--bg2:#f5f7fb;--fg:#0f172a;--muted:#5b6475;--line:#e3e7ef;--accent:#2b5ce6;--accent2:#7c4dff;--card:#ffffff;--on-accent:#ffffff;--warn:#fff4d6;--warn-fg:#6b4e00;--bad:#fde2e2;--bad-fg:#8a1c1c;
-  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
-@media (prefers-color-scheme:dark){:root{--bg:#0b0d12;--bg2:#11151d;--fg:#e7e9ee;--muted:#9aa3b2;--line:#222837;--accent:#6f95ff;--accent2:#a083ff;--card:#141924;--on-accent:#0b0d12;--warn:#2c2410;--warn-fg:#f2d48a;--bad:#3a1616;--bad-fg:#f4b4b4}}
+@font-face{font-family:Onest;font-style:normal;font-weight:100 900;font-display:swap;src:url(/fonts/onest-cyrillic-wght-normal.woff2) format("woff2");unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Onest;font-style:normal;font-weight:100 900;font-display:swap;src:url(/fonts/onest-latin-ext-wght-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:Onest;font-style:normal;font-weight:100 900;font-display:swap;src:url(/fonts/onest-latin-wght-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+:root{--bg:#ffffff;--bg2:#eef0f2;--fg:#1c1f24;--muted:#5c6470;--line:#dfe2e6;--accent:#b53d00;--card:#ffffff;--signal:#ff5a00;--on-signal:#1c1f24;--warn:#ffe3d1;--warn-fg:#1c1f24;--bad:#fde2e2;--bad-fg:#8a1c1c;
+  --sans:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#14161a;--bg2:#1c1f24;--fg:#eceef1;--muted:#9aa1ac;--line:#2b2f36;--accent:#ff8a4c;--card:#1c1f24;--signal:#ff5a00;--on-signal:#1c1f24;--warn:#4a230b;--warn-fg:#eceef1;--bad:#3a1616;--bad-fg:#f4b4b4}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 var(--sans)}
 a{color:var(--accent)}
 .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
 header{border-bottom:1px solid var(--line)}
 header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:60px;flex-wrap:wrap}
-.logo{font-weight:700;font-size:20px;color:var(--fg);text-decoration:none}
-.logo span{color:var(--accent)}
+.logo{font-weight:800;font-size:20px;letter-spacing:.02em;color:var(--fg);text-decoration:none;white-space:nowrap}
+.logo .mark{height:1.22cap;width:auto;margin-right:.49cap}
 .banner{background:var(--warn);color:var(--warn-fg);border-bottom:1px solid var(--line);font-size:15px}
 .banner p{margin:0;padding:12px 0}
 h1{font-size:clamp(26px,4vw,34px);letter-spacing:-.02em;margin:28px 0 6px}
@@ -28,8 +34,8 @@ h1{font-size:clamp(26px,4vw,34px);letter-spacing:-.02em;margin:28px 0 6px}
 input,select{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
 input[type=search]{width:240px;max-width:100%}
 button{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;padding:8px 14px;cursor:pointer}
-button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
-button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--accent2);outline-offset:2px}
+button.primary{background:var(--signal);border-color:var(--signal);color:var(--on-signal)}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .spacer{flex:1}
 table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
 th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
@@ -53,7 +59,7 @@ footer{padding:24px 0;color:var(--muted);font-size:14px;border-top:1px solid var
 </style>
 </head>
 <body>
-<header><div class="wrap"><a class="logo" id="logo" href="/sr/" translate="no">ARM<span>24</span></a><a id="back" href="/sr/#services">Nazad na sajt</a></div></header>
+<header><div class="wrap"><a class="logo" id="logo" href="/sr/" translate="no"><svg class="mark" viewBox="0 0 49.85 48.19" aria-hidden="true"><path fill="currentColor" d="M0 48.19L15.5 4.69a7 7 0 0 1 11.6-2.6L48 22.69a6.2 6.2 0 0 1-8.7 8.8L24.6 17.19 13.6 48.19z"/><circle fill="#ff5a00" cx="22.1" cy="6.99" r="3.7"/></svg>ARM24</a><a id="back" href="/sr/#services">Nazad na sajt</a></div></header>
 <div class="banner" role="note"><div class="wrap"><p>Primer napravljen za ovaj sajt, sa izmišljenim podacima. Nije gotov proizvod niti posao rađen za klijenta; ovakva aplikacija se pravi po meri. Podaci se ne čuvaju.</p></div></div>
 <main class="wrap">
   <h1>Evidencija opreme</h1>

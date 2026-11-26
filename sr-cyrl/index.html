@@ -16,31 +16,42 @@
 <meta property="og:description" content="Израда и одржавање софтвера по мери за фирме у Србији. Одговор на упит у року од два радна дана.">
 <meta property="og:locale" content="sr_RS">
 <meta property="og:locale:alternate" content="en_US">
-<link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; viewBox=&#x27;0 0 64 64&#x27;&gt;&lt;rect width=&#x27;64&#x27; height=&#x27;64&#x27; rx=&#x27;14&#x27; fill=&#x27;%234f7cff&#x27;/&gt;&lt;text x=&#x27;32&#x27; y=&#x27;42&#x27; font-family=&#x27;Arial&#x27; font-weight=&#x27;700&#x27; font-size=&#x27;24&#x27; text-anchor=&#x27;middle&#x27; fill=&#x27;white&#x27;&gt;24&lt;/text&gt;&lt;/svg&gt;">
+<meta property="og:image" content="https://arm24.rs/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="/fonts/onest-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"ARM24","legalName":"ARTEM MASHKOVSKII PREDUZETNIK RAČUNARSKO PROGRAMIRANJE ARM24 NOVI SAD","url":"https://arm24.rs/","email":"artem@arm24.rs","telephone":"+381654809802","taxID":"114263963","identifier":{"@type":"PropertyValue","propertyID":"MB","value":"67443187"},"foundingDate":"2024-03-18","address":{"@type":"PostalAddress","streetAddress":"Mite Ružića 2","addressLocality":"Novi Sad","addressCountry":"RS"},"founder":{"@type":"Person","name":"Artem Mashkovskii"}}
 </script>
 <script>if(location.hash==="#ponuda")location.replace("/sr-cyrl/javni-narucioci/"+location.search+"#ponuda")</script>
 <style>
+@font-face{font-family:Onest;font-style:normal;font-weight:100 900;font-display:swap;src:url(/fonts/onest-cyrillic-wght-normal.woff2) format("woff2");unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Onest;font-style:normal;font-weight:100 900;font-display:swap;src:url(/fonts/onest-latin-ext-wght-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:Onest;font-style:normal;font-weight:100 900;font-display:swap;src:url(/fonts/onest-latin-wght-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 :root{
-  --bg:#ffffff;--bg2:#f5f7fb;--fg:#0f172a;--muted:#5b6475;--line:#e3e7ef;
-  --accent:#2b5ce6;--accent2:#7c4dff;--card:#ffffff;--on-accent:#ffffff;
-  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --bg:#ffffff;--bg2:#eef0f2;--fg:#1c1f24;--muted:#5c6470;--line:#dfe2e6;
+  --accent:#b53d00;--card:#ffffff;--signal:#ff5a00;--on-signal:#1c1f24;
+  --sans:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
 }
 @media (prefers-color-scheme:dark){:root{
-  --bg:#0b0d12;--bg2:#11151d;--fg:#e7e9ee;--muted:#9aa3b2;--line:#222837;
-  --accent:#6f95ff;--accent2:#a083ff;--card:#141924;--on-accent:#0b0d12;
+  --bg:#14161a;--bg2:#1c1f24;--fg:#eceef1;--muted:#9aa1ac;--line:#2b2f36;
+  --accent:#ff8a4c;--card:#1c1f24;--signal:#ff5a00;--on-signal:#1c1f24;
 }}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
 a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 p a,li a,.note a{text-decoration:underline;text-underline-offset:2px}
 .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
 header{position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);background:color-mix(in srgb,var(--bg) 80%,transparent);border-bottom:1px solid var(--line)}
 nav{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px}
-.logo{font-weight:700;font-size:20px;letter-spacing:-.02em;color:var(--fg)}
-.logo span{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo{font-weight:800;font-size:20px;letter-spacing:.02em;color:var(--fg);white-space:nowrap}
+.logo .mark{height:1.22cap;width:auto;margin-right:.49cap}
 nav ul{display:flex;flex-wrap:wrap;gap:4px 22px;list-style:none;margin:0;padding:0}
 nav ul a{color:var(--muted);font-weight:500;font-size:15px;text-decoration:none}nav ul a:hover{color:var(--fg);text-decoration:none}
 nav ul a[aria-current]{color:var(--fg)}
@@ -48,8 +59,8 @@ nav ul a[aria-current]{color:var(--fg)}
 .hero{padding:90px 0 80px}
 .hero .wrap{display:grid;grid-template-columns:1.5fr 1fr;gap:48px;align-items:center}
 .tag{display:inline-block;font-size:14px;font-weight:500;color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:4px 12px;margin-bottom:22px}
-h1{font-size:clamp(34px,5vw,54px);line-height:1.1;letter-spacing:-.03em;margin:0 0 22px}
-h1 em{font-style:normal;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+h1{font-size:clamp(34px,5vw,54px);line-height:1.1;letter-spacing:-.03em;font-weight:800;margin:0 0 22px}
+h1 em{font-style:normal;color:var(--accent)}
 .lead{font-size:19px;color:var(--muted);margin:0}
 .reach{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:28px}
 .reach h2{font-size:20px;letter-spacing:0;margin:0 0 14px}
@@ -57,28 +68,28 @@ h1 em{font-style:normal;background:linear-gradient(90deg,var(--accent),var(--acc
 .reach .big{font-size:19px;font-weight:600;margin:0 0 6px}
 .btns{display:flex;gap:12px;flex-wrap:wrap}
 .btn{display:inline-block;padding:12px 22px;border-radius:10px;font-weight:600;border:1px solid var(--line);color:var(--fg)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.primary{background:var(--signal);border-color:var(--signal);color:var(--on-signal)}
 .btn:hover{text-decoration:none;transform:translateY(-1px)}
 section{padding:80px 0;border-top:1px solid var(--line)}
 section.alt{background:var(--bg2)}
-h2{font-size:clamp(28px,4vw,38px);letter-spacing:-.025em;margin:0 0 12px}
+h2{font-size:clamp(28px,4vw,38px);line-height:1.15;letter-spacing:-.025em;font-weight:800;margin:0 0 12px}
 .sub{color:var(--muted);margin:0 0 40px;max-width:680px}
 .grid{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
 .g4{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px}
-.card h3{margin:0 0 8px;font-size:19px}.card p{margin:0 0 12px;color:var(--muted)}.card p:last-child{margin-bottom:0}
+.card h3{margin:0 0 8px;font-size:19px;font-weight:600}.card p{margin:0 0 12px;color:var(--muted)}.card p:last-child{margin-bottom:0}
 .timeline{list-style:none;margin:20px 0 0;padding:0;border-left:2px solid var(--line)}
 .timeline li{position:relative;padding:0 0 22px 24px}
-.timeline li::before{content:"";position:absolute;left:-7px;top:7px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--bg2)}
+.timeline li::before{content:"";position:absolute;left:-7px;top:7px;width:12px;height:12px;border-radius:50%;background:var(--signal);box-shadow:0 0 0 4px var(--bg2)}
 .timeline .when{font-size:14px;font-weight:600;color:var(--accent)}
 .timeline b{display:block}.timeline span{color:var(--muted)}
 table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 td{padding:14px 20px;border-bottom:1px solid var(--line);vertical-align:top}
 tr:last-child td{border-bottom:0}
 td:first-child{color:var(--muted);width:34%;white-space:nowrap}
-td:last-child{font-weight:500}
+td:last-child{font-weight:500;font-variant-numeric:tabular-nums}
 .founder{display:grid;grid-template-columns:220px 1fr;gap:40px;align-items:start}
-.avatar{width:220px;height:220px;border-radius:24px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#fff;font:700 64px var(--sans);letter-spacing:-.04em}
+.avatar{width:220px;height:220px;border-radius:24px;background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;color:var(--fg);font:700 64px var(--sans);letter-spacing:-.04em}
 h3.exp{font-size:22px;margin:36px 0 0}
 .contact{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
 .note{color:var(--muted);font-size:14px;max-width:760px;margin:0}
@@ -88,7 +99,7 @@ footer{padding:28px 0;color:var(--muted);font-size:14px;border-top:1px solid var
 </head>
 <body>
 <header><div class="wrap"><nav aria-label="Главни мени">
-  <a class="logo" href="/sr-cyrl/" translate="no">ARM<span>24</span></a>
+  <a class="logo" href="/sr-cyrl/" translate="no"><svg class="mark" viewbox="0 0 49.85 48.19" aria-hidden="true"><path fill="currentColor" d="M0 48.19L15.5 4.69a7 7 0 0 1 11.6-2.6L48 22.69a6.2 6.2 0 0 1-8.7 8.8L24.6 17.19 13.6 48.19z"/><circle fill="#ff5a00" cx="22.1" cy="6.99" r="3.7"/></svg>ARM24</a>
   <ul><li><a href="#firme">За фирме</a></li><li><a href="#services">Услуге</a></li><li><a href="#ai">Услови сарадње</a></li><li><a href="#founder">О мени</a></li><li><a href="#company">Подаци о фирми</a></li><li><a id="ponuda" href="/sr-cyrl/javni-narucioci/">За јавне наручиоце</a></li><li class="lang"><a href="/" lang="en" hreflang="en">English</a> · <a href="/sr/" lang="sr-Latn" hreflang="sr-Latn">Srpski</a> · <a href="/sr-cyrl/" aria-current="page" lang="sr-Cyrl">Српски</a></li></ul>
 </nav></div></header>
 
