@@ -6,6 +6,10 @@
 <title>Povezivanje dva programa — primer, ARM24</title>
 <meta name="description" content="Primer prenosa podataka iz jednog programa u drugi, sa izmišljenim podacima: provera svakog reda, pretvaranje u oblik za uvoz i spisak odbijenih redova sa razlogom.">
 <link rel="canonical" href="https://arm24.rs/demo/povezivanje/">
+<meta property="og:image" content="https://arm24.rs/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preload" href="/fonts/onest-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="icon" sizes="32x32" href="/favicon-32.png">
@@ -14,9 +18,9 @@
 @font-face{font-family:Onest;font-style:normal;font-weight:100 900;font-display:swap;src:url(/fonts/onest-cyrillic-wght-normal.woff2) format("woff2");unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
 @font-face{font-family:Onest;font-style:normal;font-weight:100 900;font-display:swap;src:url(/fonts/onest-latin-ext-wght-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
 @font-face{font-family:Onest;font-style:normal;font-weight:100 900;font-display:swap;src:url(/fonts/onest-latin-wght-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-:root{--bg:#ffffff;--bg2:#eef0f2;--fg:#1c1f24;--muted:#5c6470;--line:#dfe2e6;--accent:#b53d00;--card:#ffffff;--signal:#ff5a00;--on-signal:#1c1f24;--warn:#ffe3d1;--warn-fg:#1c1f24;--bad:#fde2e2;--bad-fg:#8a1c1c;
+:root{--bg:#ffffff;--bg2:#eef0f2;--fg:#1c1f24;--muted:#5c6470;--line:#dfe2e6;--accent:#b53d00;--card:#ffffff;--signal:#ff5a00;--on-signal:#1c1f24;--warn:#ffe3d1;--warn-fg:#1c1f24;
   --sans:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
-@media (prefers-color-scheme:dark){:root{--bg:#14161a;--bg2:#1c1f24;--fg:#eceef1;--muted:#9aa1ac;--line:#2b2f36;--accent:#ff8a4c;--card:#1c1f24;--signal:#ff5a00;--on-signal:#1c1f24;--warn:#4a230b;--warn-fg:#eceef1;--bad:#3a1616;--bad-fg:#f4b4b4}}
+@media (prefers-color-scheme:dark){:root{--bg:#14161a;--bg2:#1c1f24;--fg:#eceef1;--muted:#9aa1ac;--line:#2b2f36;--accent:#ff8a4c;--card:#1c1f24;--signal:#ff5a00;--on-signal:#1c1f24;--warn:#4a230b;--warn-fg:#eceef1;}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 var(--sans)}
 a{color:var(--accent)}
@@ -50,14 +54,14 @@ pre{overflow-x:auto;white-space:pre}
 .ref{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
 .ref table{font-size:14px}
 .ok{font-weight:600}
-td.why{color:var(--bad-fg)}
+td.why{font-weight:600}
 .msg{color:var(--muted)}
 footer{padding:24px 0;color:var(--muted);font-size:14px;border-top:1px solid var(--line);margin-top:40px}
 </style>
 </head>
 <body>
 <header><div class="wrap"><a class="logo" id="logo" href="/sr/" translate="no"><svg class="mark" viewBox="0 0 49.85 48.19" aria-hidden="true"><path fill="currentColor" d="M0 48.19L15.5 4.69a7 7 0 0 1 11.6-2.6L48 22.69a6.2 6.2 0 0 1-8.7 8.8L24.6 17.19 13.6 48.19z"/><circle fill="#ff5a00" cx="22.1" cy="6.99" r="3.7"/></svg>ARM24</a><a id="back" href="/sr/#firme">Nazad na sajt</a></div></header>
-<div class="banner" role="note"><div class="wrap"><p>Primer napravljen za ovaj sajt, sa izmišljenim podacima. Nije gotov proizvod niti posao rađen za klijenta; ovakva aplikacija se pravi po meri. Podaci se ne čuvaju.</p></div></div>
+<div class="banner" role="note"><div class="wrap"><p>Primer napravljen za ovaj sajt, sa izmišljenim podacima. Nije gotov proizvod niti posao rađen za klijenta; ovakvo povezivanje se pravi po meri. Podaci se ne čuvaju.</p></div></div>
 <main class="wrap">
   <h1>Povezivanje dva programa</h1>
   <p class="sub">Program A (prodaja) izvozi prodaju u fajl. Program B (knjigovodstvo) uvozi fajl drugačijeg oblika i poznaje kupce i artikle po svojim šiframa. Prenos proverava svaki red: ispravni redovi se pretvaraju u oblik koji program B uvozi, a neispravni se izdvajaju sa razlogom, da se ne unesu pogrešno ni dva puta. Izmenite izvoz i pokrenite prenos ponovo.</p>
@@ -76,7 +80,7 @@ footer{padding:24px 0;color:var(--muted);font-size:14px;border-top:1px solid var
   </div>
   <p id="selftest" class="msg"></p>
 </main>
-<footer><div class="wrap">Povezivanje svojih programa možete zatražiti na <a href="mailto:artem@arm24.rs" translate="no">artem@arm24.rs</a> ili na telefon <a href="tel:+381654809802">065&nbsp;480&nbsp;9802</a>.<br><span translate="no">ARTEM MASHKOVSKII PREDUZETNIK RAČUNARSKO PROGRAMIRANJE ARM24 NOVI SAD</span> · Mite Ružića 2, Novi Sad · MB 67443187 · PIB 114263963</div></footer>
+<footer><div class="wrap">Povezivanje svojih programa možete zatražiti na <a href="mailto:artem@arm24.rs" translate="no">artem@arm24.rs</a> ili na telefon <a href="tel:+381654809802">065&nbsp;480&nbsp;9802</a>, radnim danima od 8 do 16 časova.<br><span translate="no">ARTEM MASHKOVSKII PREDUZETNIK RAČUNARSKO PROGRAMIRANJE ARM24 NOVI SAD</span> · Mite Ružića 2, Novi Sad · MB 67443187 · PIB 114263963</div></footer>
 <script>
 "use strict";
 // Invented data: program A's export and program B's code lists.
