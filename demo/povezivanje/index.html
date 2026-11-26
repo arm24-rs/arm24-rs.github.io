@@ -190,7 +190,7 @@ function selftest() {
   ok(t.price === 1.01 && t.amount === 3.03, "amount from the written price");
   ok(transfer(HEAD.join(";") + "\n=HYPERLINK(1);01.01.2026;K-017;A-100;1;1", []).bad[0].why.startsWith("Broj dokumenta"), "formula-like document number");
   const lim = s => transfer(HEAD.join(";") + "\nP1;01.01.2026;K-017;A-100;" + s, []).bad.map(b => b.why.split(" ")[0]).join();
-  ok(lim("1;999999999999999999999") === "Cena" && lim("2000000000;0") === "Količina" && lim("600000000;1,66") === "Iznos" && lim("1;1,005") === "Cena" && lim("1;1,123456789") === "Cena" && lim("0,0000001;1") === "Količina", "limits");
+  ok(lim("1;999999999999999999999") === "Cena" && lim("2000000000;0") === "Količina" && lim("600000000;1,67") === "Iznos" && lim("1;1,005") === "Cena" && lim("1;1,123456789") === "Cena" && lim("0,0000001;1") === "Količina", "limits");
   ok(transfer(HEAD.join(";") + "\nY-1;01.01.2026;K-017;A-100;1", []).bad[0].why === "Red nema 6 polja", "field count");
   ok(backKey("cyrl") === "cyrl" && backKey("toString") === "" && backKey(null) === "", "nazad keys");
   return "selftest ok";
