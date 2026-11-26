@@ -32,6 +32,9 @@
     <xhtml:link rel="alternate" hreflang="sr-Cyrl" href="https://arm24.rs/sr-cyrl/javni-narucioci/"/>
   </url>
   <url>
+    <loc>https://arm24.rs/llm-example/</loc>
+  </url>
+  <url>
     <loc>https://arm24.rs/demo/</loc>
   </url>
   <url>
