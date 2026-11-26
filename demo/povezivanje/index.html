@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="sr-Latn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Povezivanje dva programa — primer, ARM24</title>
+<meta name="description" content="Primer prenosa podataka iz jednog programa u drugi, sa izmišljenim podacima: provera svakog reda, pretvaranje u oblik za uvoz i spisak odbijenih redova sa razlogom.">
+<link rel="canonical" href="https://arm24.rs/demo/povezivanje/">
+<link rel="preload" href="/fonts/onest-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+@font-face{font-family:Onest;font-style:normal;font-weight:100 900;font-display:swap;src:url(/fonts/onest-cyrillic-wght-normal.woff2) format("woff2");unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Onest;font-style:normal;font-weight:100 900;font-display:swap;src:url(/fonts/onest-latin-ext-wght-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:Onest;font-style:normal;font-weight:100 900;font-display:swap;src:url(/fonts/onest-latin-wght-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+:root{--bg:#ffffff;--bg2:#eef0f2;--fg:#1c1f24;--muted:#5c6470;--line:#dfe2e6;--accent:#b53d00;--card:#ffffff;--signal:#ff5a00;--on-signal:#1c1f24;--warn:#ffe3d1;--warn-fg:#1c1f24;--bad:#fde2e2;--bad-fg:#8a1c1c;
+  --sans:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#14161a;--bg2:#1c1f24;--fg:#eceef1;--muted:#9aa1ac;--line:#2b2f36;--accent:#ff8a4c;--card:#1c1f24;--signal:#ff5a00;--on-signal:#1c1f24;--warn:#4a230b;--warn-fg:#eceef1;--bad:#3a1616;--bad-fg:#f4b4b4}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 var(--sans)}
+a{color:var(--accent)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:60px;flex-wrap:wrap}
+.logo{font-weight:800;font-size:20px;letter-spacing:.02em;color:var(--fg);text-decoration:none;white-space:nowrap}
+.logo .mark{height:1.22cap;width:auto;margin-right:.49cap}
+.banner{background:var(--warn);color:var(--warn-fg);border-bottom:1px solid var(--line);font-size:15px}
+.banner p{margin:0;padding:12px 0}
+h1{font-size:clamp(26px,4vw,34px);letter-spacing:-.02em;margin:28px 0 6px}
+.sub{color:var(--muted);margin:0 0 20px}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin:0 0 16px}
+.field{display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--muted)}
+input,select{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+button{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;padding:8px 14px;cursor:pointer}
+button.primary{background:var(--signal);border-color:var(--signal);color:var(--on-signal)}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:14px;color:var(--muted);background:var(--bg2)}
+tr:last-child td{border-bottom:0}
+.panel{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:20px;margin:0 0 40px}
+@media (max-width:700px){thead{display:none}table,tbody,tr,td{display:block}tr{border-bottom:1px solid var(--line);padding:8px 0}td{border:0;padding:4px 12px}td::before{content:attr(data-l) ": ";color:var(--muted)}}
+
+h2{font-size:20px;margin:28px 0 8px}
+textarea,pre{font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%;margin:0}
+textarea{min-height:230px;resize:vertical}
+pre{overflow-x:auto;white-space:pre}
+.panel{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:0 0 16px}
+.panel p{margin:0 0 6px}.panel p:last-child{margin:0}
+.ref{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.ref table{font-size:14px}
+.ok{font-weight:600}
+td.why{color:var(--bad-fg)}
+.msg{color:var(--muted)}
+footer{padding:24px 0;color:var(--muted);font-size:14px;border-top:1px solid var(--line);margin-top:40px}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="logo" id="logo" href="/sr/" translate="no"><svg class="mark" viewBox="0 0 49.85 48.19" aria-hidden="true"><path fill="currentColor" d="M0 48.19L15.5 4.69a7 7 0 0 1 11.6-2.6L48 22.69a6.2 6.2 0 0 1-8.7 8.8L24.6 17.19 13.6 48.19z"/><circle fill="#ff5a00" cx="22.1" cy="6.99" r="3.7"/></svg>ARM24</a><a id="back" href="/sr/#firme">Nazad na sajt</a></div></header>
+<div class="banner" role="note"><div class="wrap"><p>Primer napravljen za ovaj sajt, sa izmišljenim podacima. Nije gotov proizvod niti posao rađen za klijenta; ovakva aplikacija se pravi po meri. Podaci se ne čuvaju.</p></div></div>
+<main class="wrap">
+  <h1>Povezivanje dva programa</h1>
+  <p class="sub">Program A (prodaja) izvozi prodaju u fajl. Program B (knjigovodstvo) uvozi fajl drugačijeg oblika i poznaje kupce i artikle po svojim šiframa. Prenos proverava svaki red: ispravni redovi se pretvaraju u oblik koji program B uvozi, a neispravni se izdvajaju sa razlogom, da se ne unesu pogrešno ni dva puta. Izmenite izvoz i pokrenite prenos ponovo.</p>
+  <h2><label for="src">Izvoz iz programa A</label></h2>
+  <textarea id="src" spellcheck="false"></textarea>
+  <div class="bar" style="margin-top:12px"><button id="run" class="primary" type="button">Proveri i pretvori</button><button id="reset" type="button">Vrati primer</button><button id="dl" type="button">Preuzmi fajl za uvoz</button></div>
+  <div class="panel" aria-live="polite"><p id="sum" class="ok"></p><p class="msg">Već preneti dokumenti (prethodni prenos): <span id="done"></span>.</p></div>
+  <h2>Odbijeni redovi</h2>
+  <table><thead><tr><th scope="col">Red</th><th scope="col">Dokument</th><th scope="col">Razlog</th></tr></thead><tbody id="bad"></tbody></table>
+  <h2>Fajl za uvoz u program B</h2>
+  <pre id="out"></pre>
+  <h2>Šifarnici programa B</h2>
+  <div class="ref">
+    <table><thead><tr><th scope="col">Šifra kupca u A</th><th scope="col">Šifra kupca u B</th></tr></thead><tbody id="cust"></tbody></table>
+    <table><thead><tr><th scope="col">Artikal u A</th><th scope="col">Artikal u B</th></tr></thead><tbody id="art"></tbody></table>
+  </div>
+  <p id="selftest" class="msg"></p>
+</main>
+<footer><div class="wrap">Povezivanje svojih programa možete zatražiti na <a href="mailto:artem@arm24.rs" translate="no">artem@arm24.rs</a> ili na telefon <a href="tel:+381654809802">065&nbsp;480&nbsp;9802</a>.<br><span translate="no">ARTEM MASHKOVSKII PREDUZETNIK RAČUNARSKO PROGRAMIRANJE ARM24 NOVI SAD</span> · Mite Ružića 2, Novi Sad · MB 67443187 · PIB 114263963</div></footer>
+<script>
+"use strict";
+// Invented data: program A's export and program B's code lists.
+const SAMPLE = `Dokument;Datum;Kupac;Artikal;Količina;Cena
+P-1041;03.11.2026;K-017;A-100;12;450,00
+P-1042;03.11.2026;K-022;A-205;3;1.250,50
+P-1043;04.11.2026;K-017;A-310;1;8.900,00
+P-1044;31.11.2026;K-031;A-100;5;450,00
+P-1045;05.11.2026;K-099;A-205;2;1.250,50
+P-1046;05.11.2026;K-022;A-777;4;300,00
+P-1047;06.11.2026;K-031;A-100;0;450,00
+P-1039;02.11.2026;K-017;A-100;6;450,00
+P-1048;06.11.2026;K-040;A-310;2;8.900,00`;
+const CUST = {"K-017": "100045", "K-022": "100112", "K-031": "100208", "K-040": "100377"};
+const ART = {"A-100": "30-0100", "A-205": "30-0205", "A-310": "31-0310"};
+const DONE = ["P-1038", "P-1039", "P-1040"];
+const HEAD = ["Dokument", "Datum", "Kupac", "Artikal", "Količina", "Cena"];
+
+const num = s => /^\d{1,3}(\.\d{3})*(,\d+)?$|^\d+(,\d+)?$/.test(s) ? Number(s.replace(/\./g, "").replace(",", ".")) : NaN;
+function isoDate(s) {
+  const m = /^(\d{2})\.(\d{2})\.(\d{4})\.?$/.exec(s); if (!m) return null;
+  const [d, mo, y] = [+m[1], +m[2], +m[3]], t = new Date(Date.UTC(y, mo - 1, d));
+  return t.getUTCFullYear() === y && t.getUTCMonth() === mo - 1 && t.getUTCDate() === d ? `${m[3]}-${m[2]}-${m[1]}` : null;
+}
+
+// Check every row of A's export; return the rows B can import and the rejected ones with a reason.
+function transfer(text, done) {
+  const lines = text.replace(/\r/g, "").split("\n").filter(l => l.trim());
+  const good = [], bad = [], seen = new Set(done);
+  if (!lines.length || lines[0].split(";").map(s => s.trim()).join(";") !== HEAD.join(";")) return {good, bad: [{line: 1, doc: "", why: "Zaglavlje nije: " + HEAD.join(";")}]};
+  lines.slice(1).forEach((l, i) => {
+    const c = l.split(";").map(s => s.trim()), line = i + 2, doc = c[0] || "";
+    const why = c.length !== 6 ? "Red nema 6 polja" : !doc ? "Nema broja dokumenta"
+      : seen.has(doc) ? "Dokument je već prenet" : !isoDate(c[1]) ? "Datum ne postoji: " + c[1]
+      : !(c[2] in CUST) ? "Kupac " + c[2] + " nema šifru u programu B" : !(c[3] in ART) ? "Artikal " + c[3] + " nema šifru u programu B"
+      : !(num(c[4]) > 0) ? "Količina mora biti veća od nule" : !(num(c[5]) >= 0) ? "Cena nije broj: " + c[5] : "";
+    if (why) { bad.push({line, doc, why}); return; }
+    seen.add(doc);
+    const qty = num(c[4]), price = num(c[5]);
+    good.push({doc, date: isoDate(c[1]), cust: CUST[c[2]], art: ART[c[3]], qty, price, amount: Math.round(qty * price * 100) / 100});
+  });
+  return {good, bad};
+}
+
+// Program B's import format: comma-separated, ISO dates, decimal point, B's own codes.
+function importFile(rows) {
+  return "broj_dokumenta,datum,sifra_kupca,sifra_artikla,kolicina,cena,iznos\n" +
+    rows.map(r => [r.doc, r.date, r.cust, r.art, r.qty, r.price.toFixed(2), r.amount.toFixed(2)].join(",")).join("\n") + (rows.length ? "\n" : "");
+}
+
+const $ = id => document.getElementById(id);
+const esc = v => String(v).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+let last = {good: [], bad: []};
+function run() {
+  last = transfer($("src").value, DONE);
+  $("sum").textContent = `Preneto ${last.good.length}, odbijeno ${last.bad.length}.`;
+  $("bad").innerHTML = last.bad.map(b => `<tr><td data-l="Red">${b.line}</td><td data-l="Dokument">${esc(b.doc)}</td><td data-l="Razlog" class="why">${esc(b.why)}</td></tr>`).join("") || '<tr><td colspan="3">Nema odbijenih redova.</td></tr>';
+  $("out").textContent = importFile(last.good);
+  $("dl").disabled = !last.good.length;
+}
+function init() {
+  $("src").value = SAMPLE; $("done").textContent = DONE.join(", ");
+  $("cust").innerHTML = Object.entries(CUST).map(([a, b]) => `<tr><td data-l="Šifra kupca u A">${a}</td><td data-l="Šifra kupca u B">${b}</td></tr>`).join("");
+  $("art").innerHTML = Object.entries(ART).map(([a, b]) => `<tr><td data-l="Artikal u A">${a}</td><td data-l="Artikal u B">${b}</td></tr>`).join("");
+  $("run").addEventListener("click", run);
+  $("reset").addEventListener("click", () => { $("src").value = SAMPLE; run(); });
+  $("dl").addEventListener("click", () => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([importFile(last.good)], {type: "text/csv;charset=utf-8"}));
+    a.download = "uvoz-program-b.csv"; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  });
+  run();
+}
+
+function selftest() {
+  const ok = (c, m) => { if (!c) throw new Error(m); };
+  const r = transfer(SAMPLE, DONE);
+  ok(r.good.map(x => x.doc).join() === "P-1041,P-1042,P-1043,P-1048", "accepted rows");
+  ok(r.bad.map(x => x.doc).join() === "P-1044,P-1045,P-1046,P-1047,P-1039", "rejected rows");
+  ok(r.bad[0].why.startsWith("Datum ne postoji") && r.bad[1].why.includes("K-099") && r.bad[2].why.includes("A-777"), "reasons");
+  ok(r.bad[3].why.startsWith("Količina") && r.bad[4].why === "Dokument je već prenet", "qty, duplicate");
+  ok(num("1.250,50") === 1250.5 && num("450,00") === 450 && isNaN(num("1,2,3")) && isNaN(num("abc")), "numbers");
+  ok(isoDate("29.02.2028") === "2028-02-29" && isoDate("29.02.2026") === null && isoDate("3.11.2026") === null, "dates");
+  ok(r.good[1].amount === 3751.5, "amount");
+  ok(importFile(r.good.slice(0, 2)) === "broj_dokumenta,datum,sifra_kupca,sifra_artikla,kolicina,cena,iznos\nP-1041,2026-11-03,100045,30-0100,12,450.00,5400.00\nP-1042,2026-11-03,100112,30-0205,3,1250.50,3751.50\n", "import file");
+  const dup = transfer(HEAD.join(";") + "\nX-1;01.01.2026;K-017;A-100;1;1\nX-1;01.01.2026;K-017;A-100;1;1", []);
+  ok(dup.good.length === 1 && dup.bad[0].why === "Dokument je već prenet", "duplicate in one file");
+  ok(transfer("a;b\n1;2", []).bad[0].line === 1, "header checked");
+  ok(transfer(HEAD.join(";") + "\nY-1;01.01.2026;K-017;A-100;1", []).bad[0].why === "Red nema 6 polja", "field count");
+  ok(backKey("cyrl") === "cyrl" && backKey("toString") === "" && backKey(null) === "", "nazad keys");
+  return "selftest ok";
+}
+
+// Return page of "Nazad na sajt": only keys of BACK are used.
+const BACK = {"cyrl": "/sr-cyrl/#firme"};
+const backKey = k => Object.prototype.hasOwnProperty.call(BACK, k || "") ? k : "";
+const back = backKey(new URLSearchParams(location.search).get("nazad"));
+init();
+if (back) { $("back").href = BACK[back]; $("logo").href = "/sr-cyrl/"; }
+if (new URLSearchParams(location.search).has("selftest")) {
+  try { $("selftest").textContent = selftest(); } catch (e) { $("selftest").textContent = "selftest FAILED: " + e.message; }
+}
+</script>
+</body>
+</html>

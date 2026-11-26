@@ -117,6 +117,7 @@ def swaps(page):
          f'<a href="{lat}" lang="sr-Latn" hreflang="sr-Latn">Srpski</a> · <a href="{cyr}" aria-current="page" lang="sr-Cyrl">Српски</a>'),
     ] + {
         "": [('<a href="/demo/">', '<a href="/demo/?nazad=cyrl">'),
+             ('<a href="/demo/povezivanje/">', '<a href="/demo/povezivanje/?nazad=cyrl">'),
              ('location.replace("/sr/javni-narucioci/"', 'location.replace("/sr-cyrl/javni-narucioci/"')],
         "javni-narucioci/": [('<a href="/demo/?nazad=jn">', '<a href="/demo/?nazad=cyrl-jn">')],
     }[page]
@@ -144,13 +145,13 @@ def self_check():
                    '<meta property="og:url" content="https://arm24.rs/sr/"><meta name="description" content="Softver po meri">'
                    '<style>a{color:red}</style></head><body><a class="logo" href="/sr/" translate="no">ARM<span>24</span></a>'
                    '<a href="/sr/" aria-current="page" lang="sr-Latn">Srpski</a> · <a href="/sr-cyrl/" lang="sr-Cyrl" hreflang="sr-Cyrl">Српски</a>'
-                   '<a href="/demo/">x</a><p>Usluge &amp; podrška</p><td translate="no">ARTEM PR</td><img alt="Slika">'
+                   '<a href="/demo/">x</a><a href="/demo/povezivanje/">y</a><p>Usluge &amp; podrška</p><td translate="no">ARTEM PR</td><img alt="Slika">'
                    '<script>if(location.hash==="#ponuda")location.replace("/sr/javni-narucioci/"+location.search+"#ponuda")</script>'
                    '<a href="/sr/javni-narucioci/">Za javne naručioce</a></body></html>', "")
     for want in ('content="width=device-width"', 'lang="sr-Cyrl"', 'content="Софтвер по мери"', "a{color:red}", "Услуге &amp; подршка",
                  '<td translate="no">ARTEM PR</td>', 'alt="Слика"', '<a class="logo" href="/sr-cyrl/" translate="no">ARM<span>24</span>',
                  'href="https://arm24.rs/sr-cyrl/"', '<a href="/sr/" lang="sr-Latn" hreflang="sr-Latn">Srpski</a>',
-                 'aria-current="page" lang="sr-Cyrl">Српски</a>', 'href="/demo/?nazad=cyrl"', 'location.replace("/sr-cyrl/javni-narucioci/"+location.search+"#ponuda")',
+                 'aria-current="page" lang="sr-Cyrl">Српски</a>', 'href="/demo/?nazad=cyrl"', 'href="/demo/povezivanje/?nazad=cyrl"', 'location.replace("/sr-cyrl/javni-narucioci/"+location.search+"#ponuda")',
                  '<a href="/sr-cyrl/javni-narucioci/">За јавне наручиоце</a>'):
         assert want in page, want
     page = convert('<html lang="sr-Latn"><link rel="canonical" href="https://arm24.rs/sr/javni-narucioci/">'
