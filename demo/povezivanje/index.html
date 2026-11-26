@@ -6,6 +6,11 @@
 <title>Povezivanje dva programa — primer, ARM24</title>
 <meta name="description" content="Primer prenosa podataka iz jednog programa u drugi, sa izmišljenim podacima: provera svakog reda, pretvaranje u oblik za uvoz i spisak odbijenih redova sa razlogom.">
 <link rel="canonical" href="https://arm24.rs/demo/povezivanje/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://arm24.rs/demo/povezivanje/">
+<meta property="og:title" content="Povezivanje dva programa — primer, ARM24">
+<meta property="og:description" content="Primer prenosa podataka iz jednog programa u drugi, sa izmišljenim podacima.">
+<meta property="og:locale" content="sr_RS">
 <meta property="og:image" content="https://arm24.rs/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -54,7 +59,7 @@ pre{overflow-x:auto;white-space:pre}
 .ref{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
 .ref table{font-size:14px}
 .ok{font-weight:600}
-td.why{font-weight:600}
+td.why{font-weight:600}td.why::before{font-weight:400}
 .msg{color:var(--muted)}
 footer{padding:24px 0;color:var(--muted);font-size:14px;border-top:1px solid var(--line);margin-top:40px}
 </style>
@@ -99,6 +104,7 @@ const ART = {"A-100": "30-0100", "A-205": "30-0205", "A-310": "31-0310"};
 const DONE = ["P-1038", "P-1039", "P-1040"];
 const HEAD = ["Dokument", "Datum", "Kupac", "Artikal", "Količina", "Cena"];
 
+const MAX = 1e9;  // larger amounts are a typing error in a sample like this
 const num = s => /^\d{1,3}(\.\d{3})*(,\d+)?$|^\d+(,\d+)?$/.test(s) ? Number(s.replace(/\./g, "").replace(",", ".")) : NaN;
 function isoDate(s) {
   const m = /^(\d{2})\.(\d{2})\.(\d{4})\.?$/.exec(s); if (!m) return null;
@@ -116,7 +122,8 @@ function transfer(text, done) {
     const why = c.length !== 6 ? "Red nema 6 polja" : !doc ? "Nema broja dokumenta"
       : seen.has(doc) ? "Dokument je već prenet" : !isoDate(c[1]) ? "Datum ne postoji: " + c[1]
       : !own(CUST, c[2]) ? "Kupac " + c[2] + " nema šifru u programu B" : !own(ART, c[3]) ? "Artikal " + c[3] + " nema šifru u programu B"
-      : !(num(c[4]) > 0) ? "Količina mora biti veća od nule" : !(num(c[5]) >= 0) ? "Cena nije broj: " + c[5] : "";
+      : !(num(c[4]) > 0) ? "Količina mora biti veća od nule" : !(num(c[5]) >= 0) ? "Cena nije broj: " + c[5]
+      : num(c[4]) > MAX || num(c[5]) > MAX || num(c[4]) * num(c[5]) > MAX ? "Iznos je veći od " + MAX.toLocaleString("sr-RS") : "";
     if (why) { bad.push({line, doc, why}); return; }
     seen.add(doc);
     const qty = num(c[4]), price = Math.round(num(c[5]) * 100) / 100;
@@ -150,6 +157,7 @@ function init() {
   $("run").addEventListener("click", run);
   $("reset").addEventListener("click", () => { $("src").value = SAMPLE; run(); });
   $("dl").addEventListener("click", () => {
+    run();
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([importFile(last.good)], {type: "text/csv;charset=utf-8"}));
     a.download = "uvoz-program-b.csv"; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
@@ -176,6 +184,7 @@ function selftest() {
   ok(importFile(transfer(HEAD.join(";") + '\nX,4;01.01.2026;K-017;A-100;1;1', []).good).split("\n")[1].startsWith('"X,4",'), "comma quoted");
   const t = transfer(HEAD.join(";") + "\nP1;01.01.2026;K-017;A-100;3;1,006", []).good[0];
   ok(t.price === 1.01 && t.amount === 3.03, "amount from the written price");
+  ok(transfer(HEAD.join(";") + "\nP1;01.01.2026;K-017;A-100;1;999999999999999999999", []).bad[0].why.startsWith("Iznos"), "huge numbers rejected");
   ok(transfer(HEAD.join(";") + "\nY-1;01.01.2026;K-017;A-100;1", []).bad[0].why === "Red nema 6 polja", "field count");
   ok(backKey("cyrl") === "cyrl" && backKey("toString") === "" && backKey(null) === "", "nazad keys");
   return "selftest ok";
